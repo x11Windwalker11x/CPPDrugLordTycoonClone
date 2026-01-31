@@ -1,0 +1,72 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "5.6",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "CPPDrugLordClone",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"AIModule",
+				"UMG"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ModelingToolsEditorMode",
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor"
+			]
+		},
+		{
+			"Name": "StateTree",
+			"Enabled": true
+		},
+		{
+			"Name": "GameplayStateTree",
+			"Enabled": true
+		},
+		{
+			"Name": "ChaosModularVehicle",
+			"Enabled": true
+		},
+		{
+			"Name": "ModularCheatManager",
+			"Enabled": true
+		},
+		{
+			"Name": "ModularInventorySystem",
+			"Enabled": true
+		},
+		{
+			"Name": "ModularInteractionSystem",
+			"Enabled": true
+		},
+		{
+			"Name": "ModularPlayerController",
+			"Enabled": true
+		},
+		{
+			"Name": "Windwalker_Productions_SharedDefaults",
+			"Enabled": true
+		},
+		{
+			"Name": "ModularSaveGameSystem",
+			"Enabled": true
+		},
+		{
+			"Name": "LDAssistant",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/51c5a9a0d5f84beba23aab69bed8d28c"
+		},
+		{
+			"Name": "ModularSystemsBase",
+			"Enabled": true
+		}
+	]
+}
