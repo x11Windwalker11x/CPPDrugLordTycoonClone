@@ -12,7 +12,7 @@
 1. [Framework Overview](#framework-overview)
 2. [Complete Repository Structure](#complete-repository-structure)
 3. [Include Path Reference](#include-path-reference)
-4. [Golden Rules (Complete #1-40)](#golden-rules)
+4. [Golden Rules (Complete #1-45)](#golden-rules)
 5. [Plugin Architecture](#plugin-architecture)
 6. [Interface System](#interface-system)
 7. [Save System Architecture](#save-system-architecture)
@@ -141,14 +141,6 @@ Windwalker_Productions_SharedDefaults/
 │   │   ├── InteractableInventoryLogging.h
 │   │   └── SharedLogging.h
 │   └── Windwalker_Productions_SharedDefaults.h
-└── Intermediate/Build/Win64/UnrealEditor/Inc/Windwalker_Productions_SharedDefaults/UHT/
-    ├── DebugSettingsDataAsset.generated.h
-    ├── DebugSubsystem.generated.h
-    ├── InteractableInterface.generated.h
-    ├── InteractionPredictionState.generated.h
-    ├── InteractorInterface.generated.h
-    ├── Windwalker_Productions_SharedDefaultsClasses.h
-    └── WW_Enums.generated.h
 ```
 
 ### ModularSystemsBase (L0.5)
@@ -192,8 +184,6 @@ ModularSystemsBase/
 │   │       ├── JsonReaderBase.h
 │   │       └── RecipeJsonReader.h
 │   └── ModularSystemsBase.h
-└── Intermediate/Build/Win64/x64/UnrealEditor/Development/ModularSystemsBase/
-    └── Definitions.ModularSystemsBase.h
 ```
 
 ### ModularPlayerController (L2)
@@ -234,20 +224,6 @@ ModularPlayerController/
 │   ├── MPC_GameMode.h
 │   ├── MPC_PlayerState.h
 │   └── PersistentPlayerData.h
-└── Intermediate/Build/Win64/UnrealEditor/Inc/ModularPlayerController/UHT/
-    ├── InputActionMechanicComponent.generated.h
-    ├── InputSettingsDataAsset.generated.h
-    ├── ModularAIController_Master.generated.h
-    ├── ModularInputReceiver.generated.h
-    ├── ModularPlayerControllerClasses.h
-    ├── ModularPlayerController_Master.generated.h
-    ├── MPC_Character_Master.generated.h
-    ├── MPC_GameMode.generated.h
-    ├── MPC_Pawn_Master.generated.h
-    ├── MPC_PlayerCameraManager.generated.h
-    ├── MPC_PlayerState.generated.h
-    ├── MPC_Vehicle_Master.generated.h
-    └── PersistentPlayerData.generated.h
 ```
 
 ### ModularInteractionSystem (L2)
@@ -265,13 +241,6 @@ ModularInteractionSystem/
 │   ├── InteractionSubsystem.h
 │   ├── ModularInteractionSystem.h
 │   └── SpatialHashGrid.h
-└── Intermediate/Build/Win64/UnrealEditor/Inc/ModularInteractionSystem/UHT/
-    ├── AIInteractorComponnet.generated.h
-    ├── InteractableComponent.generated.h
-    ├── InteractablePriorityStruct.generated.h
-    ├── InteractionSubsystem.generated.h
-    ├── InteractorComponent.generated.h
-    └── ModularInteractionSystemClasses.h
 ```
 
 ### ModularInventorySystem (L2)
@@ -305,31 +274,10 @@ ModularInventorySystem/
 │   │   ├── InventoryResizableWindowWidget.h
 │   │   ├── InventorySlotWidget.h
 │   │   └── RootWidget.h
+│   ├── Subsystems/
+│   │   └── InventoryWidgetManager.h
 │   ├── ModularInventoryInteractableSystem.h
 │   └── PickUpActor.h
-└── Intermediate/Build/Win64/UnrealEditor/Inc/ModularInventoryInteractableSystem/UHT/
-    ├── ContextMenuWidget_Master.generated.h
-    ├── DropQuantityWidget.generated.h
-    ├── InteractableActor_Master.generated.h
-    ├── InteractableLoadSubsystem.generated.h
-    ├── InventoryComponent.generated.h
-    ├── InventoryGridWidget.generated.h
-    ├── InventoryInterface.generated.h
-    ├── InventoryResizableWindowWidget.generated.h
-    ├── InventorySearchSortWidget.generated.h
-    ├── InventorySlot.generated.h
-    ├── InventorySlotWidget.generated.h
-    ├── ItemData.generated.h
-    ├── ItemData_Dynamic.generated.h
-    ├── JsonItemLoader.generated.h
-    ├── MIIS_RightClickContextMenu.generated.h
-    ├── ModularInventoryInteractableSystemClasses.h
-    ├── PickUpActor.generated.h
-    ├── PickupActor_Master.generated.h
-    ├── RootWidget.generated.h
-    ├── SearchSortWidget_Master.generated.h
-    ├── SplitQuantitiyWidget.generated.h
-    └── WW_SearchResultEntryWidget.generated.h
 ```
 
 ### SimulatorFramework (L2)
@@ -356,8 +304,6 @@ SimulatorFramework/
 │   ├── UI/
 │   │   └── ApplicationBase.h
 │   └── SimulatorFramework.h
-└── Intermediate/Build/Win64/x64/UnrealEditor/Development/SimulatorFramework/
-    └── Definitions.SimulatorFramework.h
 ```
 
 ### AdvancedWidgetFramework (L2)
@@ -374,13 +320,6 @@ AdvancedWidgetFramework/
 │   ├── Operations/
 │   │   └── AWF_DragDropOperation.h
 │   └── AdvancedWidgetFramework.h
-└── Intermediate/Build/Win64/UnrealEditor/Inc/AdvancedWidgetFramework/UHT/
-    ├── AWF_DragDropOperation.generated.h
-    ├── BoxSelectionWidget.generated.h
-    ├── ManagedWidget_Master.generated.h
-    ├── ValidWidgetInterface.generated.h
-    ├── Widget_InteractionPrompt.generated.h
-    └── Widget_PreInteraction.generated.h
 
 NOTE: UWidgetManagerBase moved to ModularSystemsBase/Subsystems/AdvancedWidgetFramework/
 NOTE: UInventoryWidgetManager in ModularInventorySystem/Subsystems/
@@ -398,13 +337,6 @@ ModularSaveGameSystem/
 │   ├── MasterSaveSubsystem.h
 │   ├── ModularSaveGameSystem.h
 │   └── UserSettingsSaveModule.h
-└── Intermediate/Build/Win64/UnrealEditor/Inc/ModularSaveGameSystem/UHT/
-    ├── AbilitiesSaveModule.generated.h
-    ├── CharacterSaveModule.generated.h
-    ├── InventorySaveModule.generated.h
-    ├── MasterSaveGame.generated.h
-    ├── MasterSaveSubsystem.generated.h
-    └── ModularSaveGameSystemClasses.h
 ```
 
 ### ModularSpawnSystem (L2)
@@ -415,9 +347,6 @@ ModularSpawnSystem/
 │   ├── Subsystems/
 │   │   └── UniversalSpawnManager.h
 │   └── ModularSpawnSystem.h
-└── Intermediate/Build/Win64/UnrealEditor/Inc/ModularSpawnSystem/UHT/
-    ├── ModularSpawnSystemClasses.h
-    └── UniversalSpawnManager.generated.h
 ```
 
 ### ModularCheatManager (L2)
@@ -429,46 +358,109 @@ ModularCheatManager/
 │   ├── ECheatPermissionLevel.h
 │   ├── ModularCheatManager.h
 │   └── ModularCheatManager_Master.h
-└── Intermediate/Build/Win64/UnrealEditor/Inc/ModularCheatManager/UHT/
-    ├── DeveloperWhiteListAsset.generated.h
-    ├── ECheatPermissionLevel.generated.h
-    ├── ModularCheatManager.generated.h
-    ├── ModularCheatManagerClasses.h
-    └── ModularCheatManager_Master.generated.h
 ```
 
 ---
 
 ## 📋 INCLUDE PATH REFERENCE
 
-### Standard Include Patterns
+### UE Convention: .generated.h Files
 
-**1. SharedDefaults Interfaces:**
+`.generated.h` files are auto-generated by Unreal Header Tool (UHT) and placed in `Intermediate/Build/`. **Never document or list these files** - they are build artifacts.
+
+**Standard Pattern:** Always include the `.generated.h` as the **last include** in your header file:
 ```cpp
-#include "Interfaces/ModularInventorySystem/InventoryInterface.h"
-#include "Interfaces/ModularInteractionSystem/InteractableInterface.h"
-#include "Interfaces/SimulatorFramework/DurabilityInterface.h"
-#include "Interfaces/ModularPlayerController/CameraControlInterface.h"
-#include "Interfaces/ModularSaveGameSystem/SaveableInterface.h"
+// MyComponent.h
+#pragma once
+#include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "MyComponent.generated.h"  // ALWAYS LAST
+
+UCLASS()
+class MYPLUGIN_API UMyComponent : public UActorComponent
 ```
 
-**2. SharedDefaults Delegates:**
+### Standard Include Patterns
+
+**1. SharedDefaults Interfaces (18 total):**
+```cpp
+// ModularInventorySystem (4)
+#include "Interfaces/ModularInventorySystem/InventoryInterface.h"
+#include "Interfaces/ModularInventorySystem/CraftingInterface.h"
+#include "Interfaces/ModularInventorySystem/SlottableInteface.h"
+#include "Interfaces/ModularInventorySystem/ItemSpawnerInterface.h"
+
+// ModularInteractionSystem (2)
+#include "Interfaces/ModularInteractionSystem/InteractableInterface.h"
+#include "Interfaces/ModularInteractionSystem/InteractorInterface.h"
+
+// ModularPlayerController (2)
+#include "Interfaces/ModularPlayerController/CameraControlInterface.h"
+#include "Interfaces/ModularPlayerController/ModularInputReceiver.h"
+
+// SimulatorFramework (5)
+#include "Interfaces/SimulatorFramework/DurabilityInterface.h"
+#include "Interfaces/SimulatorFramework/DegradableInterface.h"
+#include "Interfaces/SimulatorFramework/DeviceInterface.h"
+#include "Interfaces/SimulatorFramework/PhysicalInteractionInterface.h"
+#include "Interfaces/SimulatorFramework/MiniGameStationInterface.h"
+
+// ModularSaveGameSystem (1)
+#include "Interfaces/ModularSaveGameSystem/SaveableInterface.h"
+
+// ModularSpawnSystem (1)
+#include "Interfaces/ModularSpawnSystem/SaveableInteface.h"
+
+// ModularQuestSystem (1)
+#include "Interfaces/ModularQuestSystem/GameplayEventHandlerInteface.h"
+
+// AdvancedWidgetFramework (2)
+#include "Interfaces/AdvancedWidgetFramework/ValidWidgetInterface.h"
+#include "Interfaces/AdvancedWidgetFramework/ManagedWidgetInterface.h"
+```
+
+**2. SharedDefaults Delegates (8 total):**
 ```cpp
 #include "Delegates/ModularInventorySystem/InventoryDelegates.h"
 #include "Delegates/ModularInteractionSystem/InteractionDelegates.h"
 #include "Delegates/CraftingDelegates/CraftingDelegates.h"
 #include "Delegates/SimulatorFramework/SimulatorDelegates.h"
 #include "Delegates/ModularSaveGameSystem/SaveDelegates.h"
+#include "Delegates/ModularSpawnSystem/SpawnDelegates.h"
+#include "Delegates/ModularQuestSystem/GameplayEventDelegates.h"
+#include "Delegates/AdvancedWidgetFramework/WW_WidgetDelegates.h"
 ```
 
-**3. SharedDefaults Data Structs:**
+**3. SharedDefaults Data Structs (14 total):**
 ```cpp
+// Core (3)
 #include "Lib/Data/Core/InputConfigData.h"
 #include "Lib/Data/Core/ObjectiveData.h"
+#include "Lib/Data/Core/WorldObjectData.h"
+
+// ModularInventorySystem (1)
 #include "Lib/Data/ModularInventorySystem/InventoryData.h"
+
+// ModularInteractionSystem (3)
+#include "Lib/Data/ModularInteractionSystem/InteractionData.h"
+#include "Lib/Data/ModularInteractionSystem/InteractionDefaultsConstants.h"
+#include "Lib/Data/ModularInteractionSystem/InteractionPredictionState.h"
+
+// ModularCraftingData (1)
 #include "Lib/Data/ModularCraftingData/CraftingData.h"
+
+// SimulatorFramework (1)
 #include "Lib/Data/SimulatorFramework/MiniGameData.h"
+
+// ModularSaveGameSystem (1)
 #include "Lib/Data/ModularSaveGameSystem/SaveData.h"
+
+// ModularSpawnSystem (1)
+#include "Lib/Data/ModularSpawnSystem/SpawnData.h"
+
+// ModularQuestSystem (2)
+#include "Lib/Data/ModularQuestSystem/GameplayEventData.h"
+#include "Lib/Data/ModularQuestSystem/CameraEvents.h"
 ```
 
 **4. SharedDefaults Enums & Tags:**
@@ -539,7 +531,313 @@ ModularCheatManager/
 
 ---
 
-## ⚡ GOLDEN RULES (Complete #1-40)
+## 📋 INTERFACE REGISTRY (18 Interfaces)
+
+All interfaces live in `SharedDefaults/Public/Interfaces/<PluginName>/`. Use `SHAREDDEFAULTS_API` export macro.
+
+| Interface | Plugin Folder | Include Path | Purpose |
+|-----------|---------------|--------------|---------|
+| IInventoryInterface | ModularInventorySystem | `Interfaces/ModularInventorySystem/InventoryInterface.h` | Inventory operations (Add, Remove, Drop, Equip) |
+| ICraftingInterface | ModularInventorySystem | `Interfaces/ModularInventorySystem/CraftingInterface.h` | Crafting capability queries |
+| ISlottableInterface | ModularInventorySystem | `Interfaces/ModularInventorySystem/SlottableInteface.h` | Items that can occupy slots |
+| IItemSpawnerInterface | ModularInventorySystem | `Interfaces/ModularInventorySystem/ItemSpawnerInterface.h` | Actors that spawn items |
+| IInteractableInterface | ModularInteractionSystem | `Interfaces/ModularInteractionSystem/InteractableInterface.h` | Objects that can be interacted with |
+| IInteractorInterface | ModularInteractionSystem | `Interfaces/ModularInteractionSystem/InteractorInterface.h` | Actors that perform interactions |
+| ICameraControlInterface | ModularPlayerController | `Interfaces/ModularPlayerController/CameraControlInterface.h` | Camera mode switching |
+| IModularInputReceiver | ModularPlayerController | `Interfaces/ModularPlayerController/ModularInputReceiver.h` | Input routing to pawns |
+| IDurabilityInterface | SimulatorFramework | `Interfaces/SimulatorFramework/DurabilityInterface.h` | Durability queries and modifications |
+| IDegradableInterface | SimulatorFramework | `Interfaces/SimulatorFramework/DegradableInterface.h` | Objects with degradation over time |
+| IDeviceInterface | SimulatorFramework | `Interfaces/SimulatorFramework/DeviceInterface.h` | Device state and power management |
+| IPhysicalInteractionInterface | SimulatorFramework | `Interfaces/SimulatorFramework/PhysicalInteractionInterface.h` | Physics grab/manipulation |
+| IMiniGameStationInterface | SimulatorFramework | `Interfaces/SimulatorFramework/MiniGameStationInterface.h` | Mini-game host actors |
+| ISaveableInterface | ModularSaveGameSystem | `Interfaces/ModularSaveGameSystem/SaveableInterface.h` | Objects with persistent state |
+| ISaveableInterface (Spawn) | ModularSpawnSystem | `Interfaces/ModularSpawnSystem/SaveableInteface.h` | Spawn system save support |
+| IGameplayEventHandlerInterface | ModularQuestSystem | `Interfaces/ModularQuestSystem/GameplayEventHandlerInteface.h` | Gameplay event receivers |
+| IValidWidgetInterface | AdvancedWidgetFramework | `Interfaces/AdvancedWidgetFramework/ValidWidgetInterface.h` | Widget validation |
+| IManagedWidgetInterface | AdvancedWidgetFramework | `Interfaces/AdvancedWidgetFramework/ManagedWidgetInterface.h` | Widget lifecycle management |
+
+---
+
+## 📋 DELEGATE REGISTRY (8 Delegate Files)
+
+All delegates live in `SharedDefaults/Public/Delegates/<PluginName>/`. Delegates enable UP communication.
+
+| Delegate File | Plugin | Include Path | Key Delegates |
+|---------------|--------|--------------|---------------|
+| InventoryDelegates.h | ModularInventorySystem | `Delegates/ModularInventorySystem/InventoryDelegates.h` | OnItemAdded, OnItemRemoved, OnSlotChanged |
+| InteractionDelegates.h | ModularInteractionSystem | `Delegates/ModularInteractionSystem/InteractionDelegates.h` | OnInteractionStarted, OnInteractionEnded |
+| CraftingDelegates.h | CraftingPlugin | `Delegates/CraftingDelegates/CraftingDelegates.h` | OnCraftingStarted, OnCraftingComplete |
+| SimulatorDelegates.h | SimulatorFramework | `Delegates/SimulatorFramework/SimulatorDelegates.h` | OnDeviceStateChanged, OnMiniGameEnded |
+| SaveDelegates.h | ModularSaveGameSystem | `Delegates/ModularSaveGameSystem/SaveDelegates.h` | OnSaveRequested, OnLoadComplete |
+| SpawnDelegates.h | ModularSpawnSystem | `Delegates/ModularSpawnSystem/SpawnDelegates.h` | OnActorSpawned, OnActorDespawned |
+| GameplayEventDelegates.h | ModularQuestSystem | `Delegates/ModularQuestSystem/GameplayEventDelegates.h` | OnGameplayEvent, OnObjectiveUpdated |
+| WW_WidgetDelegates.h | AdvancedWidgetFramework | `Delegates/AdvancedWidgetFramework/WW_WidgetDelegates.h` | OnWidgetShown, OnWidgetHidden |
+
+---
+
+## 📋 DATA STRUCT REGISTRY
+
+All data structs live in `SharedDefaults/Public/Lib/Data/<Category>/`.
+
+| Data File | Category | Include Path | Key Structs |
+|-----------|----------|--------------|-------------|
+| InventoryData.h | ModularInventorySystem | `Lib/Data/ModularInventorySystem/InventoryData.h` | FInventorySlot, FItemInstance |
+| InteractionData.h | ModularInteractionSystem | `Lib/Data/ModularInteractionSystem/InteractionData.h` | FInteractionData |
+| InteractionPredictionState.h | ModularInteractionSystem | `Lib/Data/ModularInteractionSystem/InteractionPredictionState.h` | FInteractionPredictionState |
+| CraftingData.h | ModularCraftingData | `Lib/Data/ModularCraftingData/CraftingData.h` | FRecipeData, FCraftingResult |
+| MiniGameData.h | SimulatorFramework | `Lib/Data/SimulatorFramework/MiniGameData.h` | FMiniGameData, FSnapPointData |
+| SaveData.h | ModularSaveGameSystem | `Lib/Data/ModularSaveGameSystem/SaveData.h` | FSaveData, FSaveSlotInfo |
+| SpawnData.h | ModularSpawnSystem | `Lib/Data/ModularSpawnSystem/SpawnData.h` | FSpawnRequest, FDropTableEntry |
+| GameplayEventData.h | ModularQuestSystem | `Lib/Data/ModularQuestSystem/GameplayEventData.h` | FGameplayEventData |
+| CameraEvents.h | ModularQuestSystem | `Lib/Data/ModularQuestSystem/CameraEvents.h` | FCameraEventData |
+| InputConfigData.h | Core | `Lib/Data/Core/InputConfigData.h` | FInputConfig |
+| ObjectiveData.h | Core | `Lib/Data/Core/ObjectiveData.h` | FObjectiveData |
+| WorldObjectData.h | Core | `Lib/Data/Core/WorldObjectData.h` | FWorldObjectData |
+| WW_Enums.h | Enums | `Lib/Data/Enums/WW_Enums.h` | All operator enums |
+| WW_TagLibrary.h | Tags | `Lib/Data/Tags/WW_TagLibrary.h` | Cached GameplayTags |
+
+---
+
+## 🔧 MODULE CREATION PROTOCOL
+
+### When Creating a New Interface
+
+**Step 1: Create Interface File**
+```
+Location: SharedDefaults/Public/Interfaces/<PluginName>/<InterfaceName>.h
+```
+
+**Step 2: Interface Template**
+```cpp
+// <InterfaceName>.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "UObject/Interface.h"
+#include "GameplayTagContainer.h"  // If using tags
+#include "<InterfaceName>.generated.h"
+
+// Forward declarations for structs
+struct FMyData;
+
+UINTERFACE(MinimalAPI, Blueprintable)
+class U<InterfaceName> : public UInterface
+{
+    GENERATED_BODY()
+};
+
+class SHAREDDEFAULTS_API I<InterfaceName>
+{
+    GENERATED_BODY()
+
+public:
+    // MANDATORY: Type-safe getter (Rule #29)
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "<Category>")
+    UActorComponent* Get<System>Component();
+    // OR: AActor* Get<System>Actor();
+    // OR: UObject* Get<System>Object();
+
+    // Interface functions (< 0.02ms each, Rule #31)
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "<Category>")
+    bool DoSomething(FName ID);
+};
+```
+
+**Step 3: Update Documentation**
+1. Add to Interface Registry table in this file
+2. Add include path to Standard Include Patterns section
+3. Update SharedDefaults directory tree
+
+**Step 4: Commit Message Format**
+```
+Add I<InterfaceName> interface for <purpose>
+
+- Create SharedDefaults/Interfaces/<Plugin>/<Name>.h
+- Add mandatory Get<X>Component() getter
+- Update Architecture: Interface Registry, Include Paths
+```
+
+---
+
+### When Creating a New Delegate File
+
+**Step 1: Create Delegate File**
+```
+Location: SharedDefaults/Public/Delegates/<PluginName>/<DelegateName>Delegates.h
+```
+
+**Step 2: Delegate Template**
+```cpp
+// <System>Delegates.h
+#pragma once
+
+#include "CoreMinimal.h"
+
+// Forward declarations
+struct FMyData;
+
+// Signature: Old, New order (Rule: Delegate Parameter Order)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn<Event>Changed,
+    const FMyData&, OldValue,
+    const FMyData&, NewValue);
+
+// Fire AFTER the fact (Rule: Delegate Timing)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn<Event>Completed,
+    bool, bSuccess);
+```
+
+**Step 3: Update Documentation**
+1. Add to Delegate Registry table in this file
+2. Add include path to Standard Include Patterns section
+
+---
+
+### When Creating a New Data Struct File
+
+**Step 1: Create Struct File**
+```
+Location: SharedDefaults/Public/Lib/Data/<PluginName>/<StructName>Data.h
+```
+
+**Step 2: Struct Template**
+```cpp
+// <System>Data.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+#include "<System>Data.generated.h"
+
+// Atomic struct (Layer 0): 3-8 fields, single purpose
+USTRUCT(BlueprintType)
+struct SHAREDDEFAULTS_API F<Atomic>Config
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float Value = 0.f;
+
+    // Only IsValid() allowed in structs (Rule #12)
+    bool IsValid() const { return Value > 0.f; }
+};
+
+// Composite struct (Layer 1): Combines atomics
+USTRUCT(BlueprintType)
+struct SHAREDDEFAULTS_API F<Composite>Data
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    F<Atomic>Config Config;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGameplayTag TypeTag;
+
+    bool IsValid() const { return Config.IsValid() && TypeTag.IsValid(); }
+};
+```
+
+**Step 3: Update Documentation**
+1. Add to Data Struct Registry table in this file
+2. Add include path to Standard Include Patterns section
+
+---
+
+### When Creating a New Subsystem
+
+**Step 1: Determine Layer**
+- L0.5 (ModularSystemsBase): Shared by 2+ L2 plugins
+- L2 (Feature Plugin): Plugin-specific only
+
+**Step 2: Create Subsystem File**
+```
+L0.5 Location: ModularSystemsBase/Public/Subsystems/<Category>/<SubsystemName>.h
+L2 Location: <PluginName>/Public/Subsystems/<SubsystemName>.h
+```
+
+**Step 3: Subsystem Template**
+```cpp
+// <SubsystemName>.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/LocalPlayerSubsystem.h"  // or GameInstanceSubsystem
+#include "<SubsystemName>.generated.h"
+
+UCLASS()
+class <MODULE>_API U<SubsystemName> : public ULocalPlayerSubsystem
+{
+    GENERATED_BODY()
+
+public:
+    // Static accessor pattern
+    static U<SubsystemName>* Get(const APlayerController* PC)
+    {
+        if (!PC) return nullptr;
+        return PC->GetLocalPlayer()->GetSubsystem<U<SubsystemName>>();
+    }
+
+    // For GameInstanceSubsystem:
+    // static U<SubsystemName>* Get(const UObject* WorldContext)
+    // {
+    //     UGameInstance* GI = UGameplayStatics::GetGameInstance(WorldContext);
+    //     return GI ? GI->GetSubsystem<U<SubsystemName>>() : nullptr;
+    // }
+};
+```
+
+**Step 4: Update Documentation**
+1. Add to plugin directory tree in Repository Structure
+2. Add include path to ModularSystemsBase Subsystems section (if L0.5)
+
+---
+
+### When Creating a New Component
+
+**Step 1: Create Component File**
+```
+L0.5 Location: ModularSystemsBase/Public/Components/<ComponentName>.h
+L2 Location: <PluginName>/Public/Components/<ComponentName>.h
+```
+
+**Step 2: Component Template**
+```cpp
+// <ComponentName>.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "Net/UnrealNetwork.h"  // ALWAYS include (Rule #13)
+#include "<ComponentName>.generated.h"
+
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+class <MODULE>_API U<ComponentName> : public UActorComponent
+{
+    GENERATED_BODY()
+
+public:
+    U<ComponentName>();
+
+protected:
+    virtual void BeginPlay() override;
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+    // Cached subsystem access (Rule #41)
+private:
+    UPROPERTY()
+    TObjectPtr<UWidgetManagerBase> CachedWidgetManager = nullptr;
+
+protected:
+    UWidgetManagerBase* GetWidgetManager() const;
+};
+```
+
+**Step 3: Update Documentation**
+1. Add to plugin directory tree in Repository Structure
+
+---
+
+## ⚡ GOLDEN RULES (Complete #1-45)
 
 ### Priority 1: Performance
 
@@ -681,6 +979,18 @@ protected:
         return CachedWidgetManager;
     }
 ```
+
+---
+
+### Module Creation Protocol
+
+**42. Every new interface requires documentation update** — When creating an interface: (1) Add to Interface Registry table, (2) Add include path to Standard Include Patterns, (3) Update SharedDefaults directory tree. No interface exists without registry entry.
+
+**43. Every new delegate file requires documentation update** — When creating delegates: (1) Add to Delegate Registry table, (2) Add include path to Standard Include Patterns. Delegate parameter order: always `Old, New`. Fire AFTER the fact.
+
+**44. Every new data struct file requires documentation update** — When creating structs: (1) Add to Data Struct Registry table, (2) Add include path to Standard Include Patterns. Structs have ZERO logic except `IsValid()`.
+
+**45. Every new subsystem/component requires directory tree update** — When creating subsystems or components: (1) Add to plugin directory tree in Repository Structure, (2) Add include path if L0.5 shared module. Follow Module Creation Protocol templates.
 
 ---
 
@@ -1798,7 +2108,7 @@ TSet<TWeakObjectPtr<UObject>> RegisteredSaveables;
 - Macros correct
 
 **Layer 2: FRAMEWORK COMPLIANCE**
-- Golden Rules #1-40 checked
+- Golden Rules #1-45 checked
 - No L2→L2 lateral dependencies
 - Networking included
 - Performance < 0.02ms
@@ -1905,7 +2215,7 @@ SLEEP SOUNDLY: This code is solid.
 
 **Documentation:** ✅ Complete with file paths
 
-**Rules:** ✅ 40 Golden Rules (#1-40)
+**Rules:** ✅ 45 Golden Rules (#1-45)
 
 **Plugins:** ✅ 11 plugins mapped
 

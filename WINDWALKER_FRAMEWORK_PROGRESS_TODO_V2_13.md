@@ -1,7 +1,7 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** January 27, 2026  
-**Framework Version:** 2.13  
+**Last Updated:** January 31, 2026
+**Framework Version:** 2.13
 **Author:** Windwalker Productions
 
 ---
@@ -25,13 +25,12 @@
 
 The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem designed for AAA-level performance, maximum decoupling, and marketplace-ready distribution.
 
-**Current Status:** All core systems implemented. MiniGame system complete. Interface & Save System architecture finalized (V2.13). Workflow, learning, and QA systems documented. **4 plugins incomplete/need refactor:**
+**Current Status:** All core systems implemented. MiniGame system complete. Interface & Save System architecture finalized (V2.13). Widget System refactored. Module Creation Protocol standardized. **3 plugins incomplete:**
 - ModularSpawnSystem (30% - pickups only)
-- AdvancedWidgetFramework (architectural violation - needs base class split)
 - ModularSaveGameSystem (architecture only - no implementation)
 - WeatherTimeManager (basic day/night cycle planned - weather deferred)
 
-**Latest Milestone:** Phase 6.1 (Interface & Save Architecture) - Complete
+**Latest Milestone:** Phase 6.3 (Module Creation Protocol) - Complete
 
 ---
 
@@ -223,8 +222,9 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | 5.8 | Crafting Integration | ✅ COMPLETE | Jan 24, 2026 |
 | 5.9 | SimulatorFramework Expansion | ✅ COMPLETE | Jan 24, 2026 |
 | 6.0 | MiniGame System | ✅ COMPLETE | Jan 25, 2026 |
-| **6.1** | **Interface & Save Architecture** | **✅ COMPLETE** | **Jan 27, 2026** |
-| 6.2 | Widget System Refactor | ⏸️ DEFERRED | — |
+| 6.1 | Interface & Save Architecture | ✅ COMPLETE | Jan 27, 2026 |
+| 6.2 | Widget System Refactor | ✅ COMPLETE | Jan 31, 2026 |
+| **6.3** | **Module Creation Protocol** | **✅ COMPLETE** | **Jan 31, 2026** |
 
 ---
 
@@ -302,10 +302,13 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | Save Architecture | Two-tier delegate (Registry L0.5 + SaveGame L2) |
 | SaveID Format | "Actor.Component.Instance" or "Class.Name" |
 | Dirty Tracking | Mark dirty on state change, clear on save |
+| .generated.h Files | Always LAST include, never document (UHT auto-generated) |
+| Module Creation | Create → Registry → Include Paths → Directory Tree |
+| Interface Export | Use SHAREDDEFAULTS_API, include mandatory getter |
 
 ### Golden Rules Reference
 
-**Complete Golden Rules (#1-40)** are documented in detail in:
+**Complete Golden Rules (#1-45)** are documented in detail in:
 📄 **WINDWALKER_FRAMEWORK_ARCHITECTURE_V2.13_REVISED.md**
 
 **Quick Summary:**
@@ -315,9 +318,11 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 - Networking (#13-14): Always add, always optimize
 - Tags & State (#15-18): GameplayTags, cached, proper naming
 - Naming (#19-24): UE5 conventions, PascalCase, camelCase
-- **Interfaces (#25-32):** ⭐ NEW - Interface creation, scope, getters, no-casting
+- Interfaces (#25-32): Interface creation, scope, getters, no-casting
 - Design Patterns (#33-36): Atomic Composition, research, ADD
-- **Save System (#37-40):** ⭐ NEW - Two-tier, unique IDs, priority, dirty tracking
+- Save System (#37-40): Two-tier, unique IDs, priority, dirty tracking
+- **Subsystem Access (#41):** ⭐ NEW - Cache subsystem refs in components
+- **Module Creation (#42-45):** ⭐ NEW - Doc update required for new modules
 
 *Refer to Architecture V2.13 for complete rule descriptions and examples.*
 
@@ -329,9 +334,11 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 |--------|-------|
 | Total Plugins (Current) | 11 |
 | Total Plugins (Future) | 6 planned |
-| Phases Complete | 12/13 |
-| Golden Rules | 40 (in Architecture V2.13) |
-| Interfaces | 8 |
+| Phases Complete | 14/15 |
+| Golden Rules | 45 (in Architecture V2.13) |
+| Interfaces | 18 |
+| Delegates | 8 |
+| Data Structs | 14 |
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
 | P2 High | 19 (UI widgets only - refactor complete) |
@@ -627,7 +634,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | Design patterns extracted | ✅ | Atomic Composition, Research |
 | Learning system designed | ✅ | Pattern Recognition, Deep Dive, Review |
 | Quality assurance system established | ✅ | 5-layer validation |
-| Golden Rules expanded | ✅ | #1-40 complete |
+| Golden Rules expanded | ✅ | #1-45 complete |
 
 **Documentation Created:**
 - WINDWALKER_FRAMEWORK_ARCHITECTURE_V2.13_REVISED.md (~80 pages)
@@ -675,6 +682,74 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 - `UInventoryWidgetManager` (L2): Inventory-specific selection, modes
 - Pattern: Cache `APlayerController*` as private member with `Get()` accessor
 - All L2 plugins now use `UWidgetManagerBase::Get()` for generic ops
+
+---
+
+### Phase 6.3: Module Creation Protocol ✅ COMPLETE (January 31, 2026)
+
+| Task | Status | File |
+|------|--------|------|
+| Remove all Intermediate/Build sections from Architecture | ✅ | 10 sections removed |
+| Add UE Convention for .generated.h files | ✅ | Architecture |
+| Create Interface Registry (18 interfaces) | ✅ | Architecture |
+| Create Delegate Registry (8 delegates) | ✅ | Architecture |
+| Create Data Struct Registry (14 structs) | ✅ | Architecture |
+| Create Module Creation Protocol templates | ✅ | Architecture |
+| Add Golden Rules #42-45 | ✅ | Architecture |
+| Update Standard Include Patterns (complete) | ✅ | Architecture |
+| Update CLAUDE.md with Module Creation Protocol | ✅ | CLAUDE.md |
+| Update CLAUDE.md priorities | ✅ | CLAUDE.md |
+
+**Tasks Completed:** 10
+**Golden Rules Added:** #42-45 (4 new rules, total now 45)
+**Registries Created:** 3 (Interface, Delegate, Data Struct)
+
+**Documentation Updates:**
+- Interface Registry: 18 interfaces with include paths
+- Delegate Registry: 8 delegate files with include paths
+- Data Struct Registry: 14 data struct files with include paths
+- Module Creation Protocol: Templates for interfaces, delegates, structs, subsystems, components
+- CLAUDE.md: New priorities, Module Creation Protocol section, UE Conventions
+
+#### 📚 Learn Mode: Why Module Creation Protocol Matters
+
+**Problem Solved:**
+Before this phase, creating new interfaces/delegates/structs was ad-hoc. Developers would:
+- Create files without updating documentation
+- Forget to add include paths to reference sections
+- Leave directory trees outdated
+- Result: Documentation drift, confusion, wasted time searching
+
+**Pattern Recognition:**
+```cpp
+// ❌ BAD: Create interface, forget documentation
+// 6 months later: "Where is IMyInterface? What's the include path?"
+
+// ✅ GOOD: Module Creation Protocol
+// 1. Create → 2. Registry → 3. Include Paths → 4. Directory Tree
+// Result: Single source of truth, always findable
+```
+
+**Why .generated.h Convention Matters:**
+```cpp
+// ❌ BAD: Document .generated.h files
+// Problem: UHT regenerates these on every build
+// Documenting them = documenting build artifacts = stale docs
+
+// ✅ GOOD: Never document .generated.h
+// They're auto-generated, predictable, follow naming convention
+// Real source files are what matter
+```
+
+**Why Registries Matter:**
+| Without Registry | With Registry |
+|------------------|---------------|
+| Search entire codebase | Ctrl+F in one table |
+| Guess include paths | Copy exact path |
+| Miss interfaces | Complete inventory |
+| Duplicate work | See what exists |
+
+**Key Insight:** Documentation is code. If you create a module but don't update docs, you've created technical debt. Rules #42-45 make doc updates mandatory, not optional.
 
 ---
 
@@ -745,10 +820,12 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 | Metric | Value |
 |--------|-------|
-| Phases Complete | 12/13 |
+| Phases Complete | 14/15 |
 | Plugins | 11 |
-| Golden Rules | 40 (complete) |
-| Interfaces | 8 |
+| Golden Rules | 45 (complete) |
+| Interfaces | 18 |
+| Delegates | 8 |
+| Data Structs | 14 |
 | Handlers | 6 |
 | P0 Blockers | 0 |
 | Ready for Implementation | ✅ YES |
