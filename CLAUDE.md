@@ -169,26 +169,31 @@ cd CPPDrugLordClone
 git clone https://github.com/x11Windwalker11x/WWSimulatorFramework.git Plugins
 ```
 
-## On Command: Register Custom Commands
+## On Command: Create Command
 
-When user requests a custom command or shortcut automation:
+**Trigger:** `create command: <name>` or `create command: <name> "<description>"`
 
-### Claude Slash Commands (`.claude/commands/`)
-Create `.claude/commands/<name>.md` with YAML frontmatter:
+**Claude executes automatically:**
+1. Ask user for description (if not provided) and prompt instructions
+2. Create `.claude/commands/<name>.md` with YAML frontmatter
+3. Commit to git with message: `Add /<name> custom command`
 
+**File format:**
 ```markdown
 ---
-description: Your description here (shows in /help and autocomplete)
+description: <user-provided description>
 argument-hint: "[optional-args]"
 ---
 
-Your prompt/instructions for Claude here.
+<user-provided prompt instructions>
 ```
 
 | Field | Purpose |
 |-------|---------|
 | `description` | Shows in `/help` and while typing command |
 | `argument-hint` | Shows expected arguments in autocomplete |
+
+**No manual work required.** Command appears in `/help` immediately after creation.
 
 ### Windows Shortcut Automation (`BatchFiles/`)
 Structure: `SetupX.bat` → `CreateX.ps1` → `LauncherX.bat` → `X.lnk`
