@@ -29,7 +29,7 @@ OnEvent.Broadcast(Args);
 // Tags: PluginPrefix.Category.Sub (except Input.Action.*)
 ```
 
-## Rules (45 Golden Rules in Architecture)
+## Rules (46 Golden Rules in Architecture)
 1. Sub-0.02ms/component, async traces
 2. Delete any L2 → others compile
 3. `ImplementsInterface()` + `Execute_`, no cross-plugin `Cast<>`

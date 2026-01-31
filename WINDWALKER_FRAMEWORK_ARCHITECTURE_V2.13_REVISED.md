@@ -12,7 +12,7 @@
 1. [Framework Overview](#framework-overview)
 2. [Complete Repository Structure](#complete-repository-structure)
 3. [Include Path Reference](#include-path-reference)
-4. [Golden Rules (Complete #1-45)](#golden-rules)
+4. [Golden Rules (Complete #1-46)](#golden-rules)
 5. [Plugin Architecture](#plugin-architecture)
 6. [Interface System](#interface-system)
 7. [Save System Architecture](#save-system-architecture)
@@ -837,7 +837,7 @@ protected:
 
 ---
 
-## ⚡ GOLDEN RULES (Complete #1-45)
+## ⚡ GOLDEN RULES (Complete #1-46)
 
 ### Priority 1: Performance
 
@@ -991,6 +991,23 @@ protected:
 **44. Every new data struct file requires documentation update** — When creating structs: (1) Add to Data Struct Registry table, (2) Add include path to Standard Include Patterns. Structs have ZERO logic except `IsValid()`.
 
 **45. Every new subsystem/component requires directory tree update** — When creating subsystems or components: (1) Add to plugin directory tree in Repository Structure, (2) Add include path if L0.5 shared module. Follow Module Creation Protocol templates.
+
+---
+
+### Widget Creation
+
+**46. Tiered widget inheritance approach** — Not all widgets need `UManagedWidget_Master`. Use tiered approach:
+
+| Tier | Widget Type | Inherit From | Example |
+|------|-------------|--------------|---------|
+| **Tier 1: Modal/Fullscreen** | Menus, dialogs, inventory | `UManagedWidget_Master` | Inventory, pause menu, crafting |
+| **Tier 2: HUD Elements** | Persistent UI | `UUserWidget` (optional managed) | Health bar, minimap, crosshair |
+| **Tier 3: Transient** | Short-lived feedback | `UUserWidget` (never managed) | Tooltips, damage numbers, spinners |
+
+**Rationale:**
+- Tier 1 needs ESC-to-close, stack management, category tracking
+- Tier 2 may need tracking but not ESC behavior
+- Tier 3 creates overhead without benefit; they appear/disappear too fast
 
 ---
 
@@ -2108,7 +2125,7 @@ TSet<TWeakObjectPtr<UObject>> RegisteredSaveables;
 - Macros correct
 
 **Layer 2: FRAMEWORK COMPLIANCE**
-- Golden Rules #1-45 checked
+- Golden Rules #1-46 checked
 - No L2→L2 lateral dependencies
 - Networking included
 - Performance < 0.02ms
@@ -2215,7 +2232,7 @@ SLEEP SOUNDLY: This code is solid.
 
 **Documentation:** ✅ Complete with file paths
 
-**Rules:** ✅ 45 Golden Rules (#1-45)
+**Rules:** ✅ 46 Golden Rules (#1-46)
 
 **Plugins:** ✅ 11 plugins mapped
 
