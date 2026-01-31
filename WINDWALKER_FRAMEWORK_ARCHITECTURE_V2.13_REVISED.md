@@ -996,18 +996,18 @@ protected:
 
 ### Widget Creation
 
-**46. Tiered widget inheritance approach** — Not all widgets need `UManagedWidget_Master`. Use tiered approach:
+**46. Tiered widget inheritance approach** — Use tiered approach for widget base classes:
 
 | Tier | Widget Type | Inherit From | Example |
 |------|-------------|--------------|---------|
 | **Tier 1: Modal/Fullscreen** | Menus, dialogs, inventory | `UManagedWidget_Master` | Inventory, pause menu, crafting |
-| **Tier 2: HUD Elements** | Persistent UI | `UUserWidget` (optional managed) | Health bar, minimap, crosshair |
+| **Tier 2: HUD Elements** | Persistent UI | `UManagedWidget_Master` | Health bar, minimap, crosshair |
 | **Tier 3: Transient** | Short-lived feedback | `UUserWidget` (never managed) | Tooltips, damage numbers, spinners |
 
 **Rationale:**
-- Tier 1 needs ESC-to-close, stack management, category tracking
-- Tier 2 may need tracking but not ESC behavior
-- Tier 3 creates overhead without benefit; they appear/disappear too fast
+- Tier 1: Needs ESC-to-close, stack management, category tracking
+- Tier 2: MUST use managed for visibility control, show/hide via WidgetManager, consistent API
+- Tier 3: Creates overhead without benefit; appear/disappear too fast for registration
 
 ---
 

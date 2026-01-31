@@ -759,6 +759,8 @@ Before this phase, creating new interfaces/delegates/structs was ad-hoc. Develop
 |------|----------|----------------|----------|
 | Inline formulas in structs | FStationInstanceData, FToolInstanceData | Should call UProgressionHelpers | P3 |
 | RequestGameplayTag in type helpers | FItemData::IsRangedWeapon() etc. | Should use cached tags from WW_TagLibrary | P3 |
+| Interaction widgets in wrong plugin | AWF/Interaction/ | Widget_InteractionPrompt, Widget_PreInteraction should move to MIS/UI/ for consistency with MIS pattern | P3 |
+| Interaction widgets not inheriting ManagedWidget_Master | AWF/Interaction/ | Should inherit UManagedWidget_Master per Rule #46 Tier 2 | P2 |
 
 ---
 
