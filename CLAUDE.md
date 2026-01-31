@@ -1,6 +1,6 @@
 # CLAUDE.md
-> **Priority #1: Maximum effectiveness, no loss of information.**
-> **Priority #2: Minimal token usage.** Reference full docs for details.
+> **Priority #1:** Maximum effectiveness, no loss of information.
+> **Priority #2:** Minimal token usage. Reference full docs for details.
 
 ## Project
 **CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13
@@ -11,103 +11,64 @@
 ```
 
 ## Architecture
-**Layers:** L0 (SharedDefaults: interfaces/delegates/structs) → L0.5 (ModularSystemsBase) → L2 (feature plugins)
+| Layer | Plugin | Purpose |
+|-------|--------|---------|
+| L0 | SharedDefaults | Interfaces, delegates, structs, tags |
+| L0.5 | ModularSystemsBase | Shared components, subsystems, helpers |
+| L2 | MPC, MIS, MIIS, Crafting, Simulator, AWF, Save, Spawn, Cheat | Feature plugins (11 total) |
 
-**Rule:** L2 plugins never depend on each other. Communicate via L0 delegates only.
+**Rule:** L2 never depends on L2. Communicate via L0 delegates only. Delete any L2 → others compile.
 
-**Plugins:** SharedDefaults, ModularSystemsBase, ModularPlayerController, ModularInteractionSystem, ModularInventorySystem, CraftingPlugin, SimulatorFramework, AdvancedWidgetFramework, ModularSaveGameSystem, ModularSpawnSystem, ModularCheatManager
-
-## Patterns
+## Core Patterns
 ```cpp
-// Interface calls (never Cast<>)
-if (Actor->GetClass()->ImplementsInterface(UInterface::StaticClass()))
+// Interface (never Cast<>)
+if (Actor->ImplementsInterface(UInterface::StaticClass()))
     IInterface::Execute_Method(Actor, Args);
 
-// Delegates (UP communication)
-OnEvent.Broadcast(Args);
-
-// Tags: PluginPrefix.Category.Sub (except Input.Action.*)
+// Delegate (UP communication) | Tags: Plugin.Category.Sub (Input.* has no prefix)
 ```
 
-## Rules (46 Golden Rules in Architecture)
-1. Sub-0.02ms/component, async traces
-2. Delete any L2 → others compile
-3. `ImplementsInterface()` + `Execute_`, no cross-plugin `Cast<>`
-4. Cache `FGameplayTag` as UPROPERTY
-5. Always add Server RPCs + replication
-6. Cache subsystem refs in components (Rule #41)
-7. Every new module requires doc update (Rules #42-45)
+## Golden Rules (46 total - see Architecture)
+| # | Rule |
+|---|------|
+| 1-4 | Performance: <0.02ms/component, async traces, no iteration, no allocation |
+| 5-8 | Modularity: Plugin independence, L0 contracts, DOWN deps/UP delegates |
+| 13-14 | Networking: Always add RPCs + replication |
+| 25-32 | Interfaces: ImplementsInterface+Execute_, mandatory getter, <0.02ms |
+| 37-40 | Save: Two-tier delegate, unique SaveID, priority load order, dirty tracking |
+| 41 | Cache subsystem refs in components |
+| 42-45 | Module creation requires doc update |
+| 46 | HUD widgets MUST use UManagedWidget_Master |
 
 ## Naming
-`U`=UObject `A`=Actor `F`=struct `I`=interface `E`=enum | `bPrefix` for bools | PascalCase functions | camelCase locals
+`U`=UObject `A`=Actor `F`=struct `I`=interface `E`=enum | `bPrefix` bools | PascalCase funcs | camelCase locals
 
-## UE Conventions
-- `.generated.h` always LAST include in header files (UHT auto-generated, never document)
-- Include order: Own header → SharedDefaults → MSB → Engine → Generated
+## Includes
+Order: Own → SharedDefaults → MSB → Engine → `.generated.h` (always LAST)
 
-## Module Creation Protocol
+## Module Creation (SharedDefaults)
+| Type | Path | Count |
+|------|------|-------|
+| Interface | `Public/Interfaces/<Plugin>/<Name>Interface.h` | 18 |
+| Delegate | `Public/Delegates/<Plugin>/<Name>Delegates.h` | 8 |
+| Data Struct | `Public/Lib/Data/<Plugin>/<Name>Data.h` | 14 |
 
-### Locations (All in SharedDefaults)
-| Type | Path |
-|------|------|
-| Interface | `Public/Interfaces/<PluginName>/<Name>Interface.h` |
-| Delegate | `Public/Delegates/<PluginName>/<Name>Delegates.h` |
-| Data Struct | `Public/Lib/Data/<PluginName>/<Name>Data.h` |
+**Steps:** Create file → Add to Registry → Add include path → Update directory tree (Rules #42-45)
 
-### Registries (Architecture File)
-| Registry | Count | Purpose |
-|----------|-------|---------|
-| Interface | 18 | Cross-plugin contracts |
-| Delegate | 8 | UP communication |
-| Data Struct | 14 | Shared data types |
+**Interface:** `SHAREDDEFAULTS_API`, mandatory `GetXComponent()`/`GetXActor()`, <0.02ms
 
-### Creation Steps (Rules #42-45)
-1. **Create file** using template from Architecture file
-2. **Add to Registry table** in Architecture file
-3. **Add include path** to Standard Include Patterns section
-4. **Update directory tree** in Repository Structure
-
-### Interface Requirements
-- Use `SHAREDDEFAULTS_API` export macro
-- Include mandatory getter: `GetXComponent()` or `GetXActor()`
-- All functions < 0.02ms (Rule #31)
-
-### Delegate Requirements
-- Parameter order: always `Old, New`
-- Fire AFTER the fact, not before
-
-### Commit Format
-```
-Add I<Name> interface for <purpose>
-
-- Create SharedDefaults/Interfaces/<Plugin>/<Name>.h
-- Update Architecture: Registry, Include Paths, Directory Tree
-```
+**Delegate:** Parameter order `Old, New`, fire AFTER the fact
 
 ## Docs
-Full specs: `WINDWALKER_FRAMEWORK_ARCHITECTURE_V2.13_REVISED.md`, `WINDWALKER_FRAMEWORK_PROGRESS_TODO_V2_13.md`
+- `WINDWALKER_FRAMEWORK_ARCHITECTURE_V2.13_REVISED.md` - Full specs, rules, patterns
+- `WINDWALKER_FRAMEWORK_PROGRESS_TODO_V2_13.md` - Status, tasks, roadmap
 
 ## Git
 Two repos: `Plugins/` = WWSimulatorFramework | Root = CPPDrugLordTycoonClone
 
-Use `/git` to setup aliases, `/githelp` for reference.
+`/git` setup aliases | `/githelp` reference
 
-## On Command: Create Command
-**Trigger:** `create command: <name>` or `create command: <name> "<description>"`
+## Commands
+**`create command: <name>`** - Auto: Ask prompt → Create `.claude/commands/<name>.md` → Commit
 
-Auto-execute: Ask description/prompt → Create `.claude/commands/<name>.md` → Commit
-
-```markdown
----
-description: Shows in /help and autocomplete
-argument-hint: "[args]"
----
-Prompt here
-```
-
-## On Command: Create Shortcut
-**Trigger:** `create shortcut: <name>`
-
-Auto-execute: Create `BatchFiles/` scripts with dynamic paths → Run setup → Commit
-
-Pattern: `SetupX.bat` → `CreateX.ps1` → `LauncherX.bat` → `X.lnk`
+**`create shortcut: <name>`** - Auto: Create `BatchFiles/` scripts → Run setup → Commit
