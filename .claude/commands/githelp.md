@@ -1,4 +1,6 @@
-Show git alias reference for two-repo workflow
+---
+description: Show git alias reference for two-repo workflow
+---
 
 | Command | Action |
 |---------|--------|

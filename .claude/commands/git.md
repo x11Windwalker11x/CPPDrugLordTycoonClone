@@ -1,4 +1,6 @@
-Set up git aliases for two-repo workflow (WWSimulatorFramework + CPPDrugLordTycoonClone)
+---
+description: Set up git aliases for two-repo workflow (WWSimulatorFramework + CPPDrugLordTycoonClone)
+---
 
 Run this bash command to enable all git aliases:
 

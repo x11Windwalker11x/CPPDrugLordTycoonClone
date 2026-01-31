@@ -174,16 +174,21 @@ git clone https://github.com/x11Windwalker11x/WWSimulatorFramework.git Plugins
 When user requests a custom command or shortcut automation:
 
 ### Claude Slash Commands (`.claude/commands/`)
-Create `.claude/commands/<name>.md`:
-- **Line 1:** Description (shows in `/help`)
-- **Rest:** Prompt/instructions for Claude
+Create `.claude/commands/<name>.md` with YAML frontmatter:
 
-Example: `.claude/commands/build.md`
 ```markdown
-Build the project using UBT
+---
+description: Your description here (shows in /help and autocomplete)
+argument-hint: "[optional-args]"
+---
 
-Run the build command from CLAUDE.md Build Commands section.
+Your prompt/instructions for Claude here.
 ```
+
+| Field | Purpose |
+|-------|---------|
+| `description` | Shows in `/help` and while typing command |
+| `argument-hint` | Shows expected arguments in autocomplete |
 
 ### Windows Shortcut Automation (`BatchFiles/`)
 Structure: `SetupX.bat` → `CreateX.ps1` → `LauncherX.bat` → `X.lnk`
