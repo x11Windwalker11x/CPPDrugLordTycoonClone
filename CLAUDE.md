@@ -137,3 +137,80 @@ Full architecture documentation exists in these files:
 2. Call `Registry->AnnounceSaveable(this)` in BeginPlay
 3. Call `Registry->RevokeSaveable(this)` in EndPlay
 4. Provide unique SaveID format: `"Actor.Component.Instance"`
+
+## Git Workflow
+
+**Two-repo architecture:**
+- `WWSimulatorFramework` - Plugins only (framework repo)
+- `CPPDrugLordTycoonClone` - Game project (excludes Plugins/)
+
+**Session Setup - Run this alias block at start of each Claude Code session:**
+```bash
+alias goframework='cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone\Plugins"' && alias gogame='cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone"' && alias pushframework='cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone\Plugins" && git add . && git commit -m "framework update" && git push origin main' && alias pushgame='cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone" && git add . && git commit -m "game update" && git push origin main' && alias pushall='cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone\Plugins" && git add . && git commit -m "framework update" && git push origin main && cd .. && git add . && git commit -m "game update" && git push origin main' && alias pullframework='cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone\Plugins" && git pull origin main' && alias pullgame='cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone" && git pull origin main' && alias pullall='cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone\Plugins" && git pull origin main && cd .. && git pull origin main'
+```
+
+**Available commands after setup:**
+| Command | Action |
+|---------|--------|
+| `goframework` | Navigate to Plugins |
+| `gogame` | Navigate to game root |
+| `pushframework` | Push plugins only |
+| `pushgame` | Push game only |
+| `pushall` | Push both repos |
+| `pullframework` | Pull plugins only |
+| `pullgame` | Pull game only |
+| `pullall` | Pull both repos |
+
+**Fresh clone (new machine):**
+```bash
+cd "D:\Unreal Projects (2nd Place)"
+git clone https://github.com/x11Windwalker11x/CPPDrugLordTycoonClone.git CPPDrugLordClone
+cd CPPDrugLordClone
+git clone https://github.com/x11Windwalker11x/WWSimulatorFramework.git Plugins
+```
+
+## On Command: Register Custom Commands
+
+When user requests a custom command or shortcut automation:
+
+### Claude Slash Commands (`.claude/commands/`)
+Create `.claude/commands/<name>.md`:
+- **Line 1:** Description (shows in `/help`)
+- **Rest:** Prompt/instructions for Claude
+
+Example: `.claude/commands/build.md`
+```markdown
+Build the project using UBT
+
+Run the build command from CLAUDE.md Build Commands section.
+```
+
+### Windows Shortcut Automation (`BatchFiles/`)
+Structure: `SetupX.bat` → `CreateX.ps1` → `LauncherX.bat` → `X.lnk`
+
+**PowerShell Shortcut (CreateX.ps1):**
+```powershell
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent $ScriptDir
+$WshShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut("$ProjectRoot\Name.lnk")
+$Shortcut.TargetPath = "$ScriptDir\Launcher.bat"
+$Shortcut.WorkingDirectory = $ProjectRoot
+$Shortcut.IconLocation = ((Get-Command claude -EA SilentlyContinue).Source + ",0")
+$Shortcut.Description = "Description"
+$Shortcut.Save()
+```
+
+**Batch Dynamic Paths (LauncherX.bat):**
+```batch
+set "BATCH_DIR=%~dp0"
+set "PROJECT_ROOT=%BATCH_DIR%.."
+for /d %%i in ("C:\Program Files\App*") do set "APP=%%i\bin\app.exe"
+```
+
+**Workflow:**
+1. Create files in `BatchFiles/`
+2. Run `SetupX.bat` to generate shortcut
+3. Add `.claude/commands/<name>.md` if slash command needed
+4. Commit all to git
+
