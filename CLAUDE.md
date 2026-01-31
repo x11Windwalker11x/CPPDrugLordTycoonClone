@@ -15,7 +15,7 @@
 
 **Rule:** L2 plugins never depend on each other. Communicate via L0 delegates only.
 
-**Plugins:** SharedDefaults, ModularSystemsBase, ModularPlayerController, ModularInteractionSystem, ModularInventorySystem, SimulatorFramework, AdvancedWidgetFramework, ModularSaveGameSystem, ModularSpawnSystem, ModularCheatManager
+**Plugins:** SharedDefaults, ModularSystemsBase, ModularPlayerController, ModularInteractionSystem, ModularInventorySystem, CraftingPlugin, SimulatorFramework, AdvancedWidgetFramework, ModularSaveGameSystem, ModularSpawnSystem, ModularCheatManager
 
 ## Patterns
 ```cpp
