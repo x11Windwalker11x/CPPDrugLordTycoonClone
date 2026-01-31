@@ -373,17 +373,17 @@ AdvancedWidgetFramework/
 │   │   └── ManagedWidget_Master.h
 │   ├── Operations/
 │   │   └── AWF_DragDropOperation.h
-│   ├── Subsystems/
-│   │   └── WidgetManager.h
 │   └── AdvancedWidgetFramework.h
 └── Intermediate/Build/Win64/UnrealEditor/Inc/AdvancedWidgetFramework/UHT/
     ├── AWF_DragDropOperation.generated.h
     ├── BoxSelectionWidget.generated.h
     ├── ManagedWidget_Master.generated.h
     ├── ValidWidgetInterface.generated.h
-    ├── WidgetManager.generated.h
     ├── Widget_InteractionPrompt.generated.h
     └── Widget_PreInteraction.generated.h
+
+NOTE: UWidgetManagerBase moved to ModularSystemsBase/Subsystems/AdvancedWidgetFramework/
+NOTE: UInventoryWidgetManager in ModularInventorySystem/Subsystems/
 ```
 
 ### ModularSaveGameSystem (L2)
@@ -490,7 +490,12 @@ ModularCheatManager/
 ```cpp
 #include "Subsystems/EventBusSubsystem.h"
 #include "Subsystems/ModularQuestSystem/ObjectiveTrackerSubsystem.h"
-#include "Subsystems/AdvancedWidgetFramework/WidgetManagerBase.h"
+#include "Subsystems/AdvancedWidgetFramework/WidgetManagerBase.h"  // Generic widget lifecycle
+```
+
+**7. ModularInventorySystem Subsystems (Inventory-Specific):**
+```cpp
+#include "Subsystems/InventoryWidgetManager.h"  // Inventory-specific widget management
 ```
 
 **7. ModularSystemsBase Components:**
@@ -649,6 +654,33 @@ ModularCheatManager/
 **39. Save priority determines load order** — Actors (0-49) load first, Subsystems (50-99) second, Components (100-149) third, Managers (150-199) fourth, UI (200+) last. Load order: Priority 0 → Higher. Save order: Higher → 0 (cleanup before dependencies).
 
 **40. Dirty tracking required for performance** — Mark object dirty when state changes. Only save dirty objects. Clear dirty flag after successful save. IsDirty() must return accurate state. Prevents unnecessary serialization of unchanged objects.
+
+---
+
+### Subsystem Access Pattern
+
+**41. Cache subsystem references in components** — When a component needs a subsystem (WidgetManagerBase, etc.), cache the reference as a private `TObjectPtr<>` member with a `const` getter. Use `GetSubsystem<>()` in the getter, cache on first access.
+
+```cpp
+// PATTERN: Cached subsystem access in component
+private:
+    UPROPERTY()
+    TObjectPtr<UWidgetManagerBase> CachedWidgetManager = nullptr;
+
+protected:
+    UWidgetManagerBase* GetWidgetManager() const
+    {
+        if (CachedWidgetManager) return CachedWidgetManager;
+
+        APlayerController* PC = /* get player controller */;
+        if (!PC) return nullptr;
+
+        // Cache for future access
+        UMyComponent* MutableThis = const_cast<UMyComponent*>(this);
+        MutableThis->CachedWidgetManager = UWidgetManagerBase::Get(PC);
+        return CachedWidgetManager;
+    }
+```
 
 ---
 
