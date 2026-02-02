@@ -62,7 +62,7 @@ ESTIMATED TIME: [X hours]
 - No lateral L2→L2 dependencies
 - Performance <0.02ms always
 - Networking always included
-- **BUILD MANDATORY** after all code changes
+- **BUILD MANDATORY** at end of session (before commit)
 
 ---
 
