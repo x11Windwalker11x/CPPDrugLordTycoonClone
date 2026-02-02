@@ -3,7 +3,7 @@
 **Comprehensive Framework Documentation**  
 **Date:** February 2, 2026  
 **Status:** Production Ready  
-**Revision:** V2.13.1 - AWF decisions, Protocol files, Golden Rules #41-46
+**Revision:** V2.13.2 - Git Repository Rules, Two-repo architecture
 
 ---
 
@@ -20,6 +20,7 @@
 9. [Design Patterns](#design-patterns)
 10. [Learning System](#learning-system)
 11. [Quality Assurance](#quality-assurance)
+12. [Git Repository Rules](#git-repository-rules)
 
 ---
 
@@ -2043,6 +2044,107 @@ SLEEP SOUNDLY: This code is solid.
 
 ---
 
+## 🔄 GIT REPOSITORY RULES
+
+### Two-Repo Architecture
+
+```
+D:\Unreal Projects (2nd Place)\CPPDrugLordClone\  (Game repo: CPPDrugLordTycoonClone)
+├── .git/                    ← Game repo root
+├── Plugins/                 ← Framework repo: WWSimulatorFramework
+│   └── .git/                ← Separate repo (nested, NOT submodule)
+├── Source/
+├── Content/
+├── CLAUDE.md               ← Lives in GAME repo
+├── WINDWALKER_FRAMEWORK_*.md  ← Lives in GAME repo
+└── WW_*.md                 ← Lives in GAME repo
+```
+
+### Directory Mapping
+
+| Repo | GitHub | Local Path | Contains |
+|------|--------|------------|----------|
+| WWSimulatorFramework | github.com/x11Windwalker11x/WWSimulatorFramework | `Plugins/` | 11 plugins ONLY |
+| CPPDrugLordTycoonClone | github.com/x11Windwalker11x/CPPDrugLordTycoonClone | Project root | ALL content at root (Source/, Content/, Config/, *.md, etc.) |
+
+**Note:** Game repo tracks everything at project root. Plugins/ folder is excluded because it has its own .git (nested Framework repo).
+
+### MD Files Location Rule
+
+**ALL documentation files live in GAME repo (project root), NOT in Framework repo (Plugins/):**
+- CLAUDE.md
+- WINDWALKER_FRAMEWORK_ARCHITECTURE_V2_13_REVISED.md
+- WINDWALKER_FRAMEWORK_PROGRESS_TODO_V2_13.md
+- WW_SESSION_STARTER.md, WW_CLAUDE_CODE_PROMPTS.md, WW_END_OF_SESSION.md, WW_LEARNING_MODE.md
+
+### Push Commands
+
+**Framework changes (plugins only):**
+```bash
+cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone\Plugins" && git add . && git commit -m "msg" && git push
+```
+
+**Game/Docs changes (INCLUDING all MD files):**
+```bash
+cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone" && git add . && git commit -m "msg" && git push
+```
+
+**Both repos (when both changed):**
+```bash
+# Framework first
+cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone\Plugins" && git add . && git commit -m "framework: msg" && git push
+# Then Game
+cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone" && git add . && git commit -m "game: msg" && git push
+```
+
+### Pull Commands (Daily Use)
+
+**Framework:**
+```bash
+cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone\Plugins" && git pull
+```
+
+**Game:**
+```bash
+cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone" && git pull
+```
+
+### Fresh Clone (New Machine)
+
+```bash
+cd "D:\Unreal Projects (2nd Place)"
+git clone https://github.com/x11Windwalker11x/CPPDrugLordTycoonClone.git CPPDrugLordClone
+cd CPPDrugLordClone
+git clone https://github.com/x11Windwalker11x/WWSimulatorFramework.git Plugins
+# Done. Full project.
+```
+
+### Recovery Commands
+
+**Plugins missing/corrupted:**
+```bash
+cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone"
+rm -rf Plugins
+git clone https://github.com/x11Windwalker11x/WWSimulatorFramework.git Plugins
+```
+
+**Game files corrupted, keep plugins:**
+```bash
+cd "D:\Unreal Projects (2nd Place)\CPPDrugLordClone"
+git fetch origin
+git reset --hard origin/main
+```
+
+### NEVER Rules
+
+- ❌ Push MD files to Framework repo (they belong in Game repo at project root)
+- ❌ Push plugin code to Game repo (plugins have their own repo in Plugins/)
+- ❌ Assume `git add .` in Game repo catches Plugins/ changes (nested repo requires separate commit)
+- ❌ Forget to push both repos when both have changes
+- ❌ Put .gitignore exclusions that block root content from Game repo (root content belongs in Game repo)
+
+---
+
 ## 🎯 APPENDIX: QUICK REFERENCE
 
 ### Common Include Patterns
@@ -2084,6 +2186,12 @@ SLEEP SOUNDLY: This code is solid.
 
 ## 📋 VERSION HISTORY
 
+**V2.13.2** (February 2, 2026)
+- ✅ Added Git Repository Rules section (Two-repo architecture)
+- ✅ Documented Framework vs Game repo separation
+- ✅ Added push/pull/clone/recovery commands
+- ✅ Added NEVER rules for git workflow
+
 **V2.13.1** (February 2, 2026)
 - ✅ Added Golden Rules #41-47 (Widget & UI System)
 - ✅ Added AWF Architecture section (Option B decision)
@@ -2123,6 +2231,8 @@ SLEEP SOUNDLY: This code is solid.
 **Files:** ✅ 200+ files documented
 
 **Protocols:** ✅ 4 workflow files documented
+
+**Git Workflow:** ✅ Two-repo architecture documented
 
 ---
 

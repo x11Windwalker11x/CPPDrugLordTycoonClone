@@ -2,7 +2,7 @@
 > **P1:** Max effectiveness, no info loss. **P2:** Min tokens. See full docs for details.
 
 ## Project
-**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.1
+**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.2
 
 ## Build
 ```bash
@@ -86,6 +86,11 @@ END→Paste END_OF_SESSION→I generate briefing
 ## Git
 Two repos: `Plugins/`=WWSimulatorFramework | Root=CPPDrugLordTycoonClone
 `/git` setup | `/githelp` reference
+
+## Doc Update Cascade
+ARCHITECTURE updated → Update PROGRESS_TODO (version, rules, metrics) + CLAUDE.md (version)
+Milestone completed → Update PROGRESS_TODO Completed Work section
+Session end → Generate WW_SESSION_BRIEFING_[DATE].md (keep separate, don't embed)
 
 ## Common Mistakes
 ❌ `Cast<>()` cross-plugin→interface+Execute_
