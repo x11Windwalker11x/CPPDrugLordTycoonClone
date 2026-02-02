@@ -26,7 +26,7 @@ if (Actor->ImplementsInterface(UInterface::StaticClass()))
 // Delegate (UP communication) | Tags: Plugin.Category.Sub (Input.* no prefix)
 ```
 
-## Golden Rules (47) - Key Subset
+## Golden Rules (48) - Key Subset
 | # | Rule |
 |---|------|
 | 1-4 | Perf: <0.02ms, async traces, no iteration, no allocation |
@@ -38,6 +38,7 @@ if (Actor->ImplementsInterface(UInterface::StaticClass()))
 | 42-45 | Module creation = doc update |
 | 46 | HUD widgets MUST use UManagedWidget_Master |
 | 47 | Widgets belong in owning plugin's UI/ folder (not MSB/AWF) |
+| 48 | Tags in BOTH ini+WW_TagLibrary; never RequestGameplayTag() |
 
 ## AWF (Option B)
 WidgetManagerBase stays MSB permanently. AWF features register via delegates.
@@ -99,3 +100,4 @@ Session end → Generate WW_SESSION_BRIEFING_[DATE].md (keep separate, don't emb
 ❌ No networking→Always Server RPCs+replication
 ❌ Wrong include order→`.generated.h` LAST
 ❌ Widget without base→UManagedWidget_Master
+❌ `RequestGameplayTag("Tag")`→FWWTagLibrary::Tag_Name()

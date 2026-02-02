@@ -129,4 +129,75 @@ if (WidgetPtr && WidgetPtr->IsValid())
 
 ---
 
+## PATTERN REFERENCE: GAMEPLAY TAG CENTRALIZATION (Golden Rule #48)
+
+### What It Is
+All GameplayTags in Windwalker Framework require dual registration:
+1. **Engine Registration:** `Config/DefaultGameplayTags.ini`
+2. **Code Access:** `WW_TagLibrary.h/.cpp` in SharedDefaults
+
+### Why Dual Registration?
+
+| Location | Consumer | Purpose |
+|----------|----------|---------|
+| DefaultGameplayTags.ini | Designers/Blueprint | Editor tag picker discovery |
+| WW_TagLibrary | C++ code | Type-safe, compile-time validation, static caching |
+
+### The 5-Step Protocol
+
+```cpp
+// STEP 1: Register in DefaultGameplayTags.ini
++GameplayTags=(Tag="Simulator.MiniGame.Type.Lockpick",DevComment="Lockpick mini-game")
+
+// STEP 2: Define in WW_TagLibrary.cpp (WW_Internal namespace)
+namespace WW_Internal {
+    UE_DEFINE_GAMEPLAY_TAG(Simulator_MiniGame_Type_Lockpick, "Simulator.MiniGame.Type.Lockpick");
+}
+
+// STEP 3: Declare accessor in WW_TagLibrary.h
+static const FGameplayTag& Simulator_MiniGame_Type_Lockpick();
+
+// STEP 4: Implement accessor in WW_TagLibrary.cpp
+const FGameplayTag& FWWTagLibrary::Simulator_MiniGame_Type_Lockpick()
+{
+    static const FGameplayTag& Tag = WW_Internal::Simulator_MiniGame_Type_Lockpick;
+    return Tag;
+}
+
+// STEP 5: Use via accessor
+FWWTagLibrary::Simulator_MiniGame_Type_Lockpick()
+```
+
+### Why Static Caching?
+```cpp
+// The UE_DEFINE_GAMEPLAY_TAG macro creates a native tag at startup
+// The accessor returns a reference to this static tag
+// First call: returns cached reference (no lookup)
+// All subsequent calls: same cached reference
+// Result: O(1) access, no string hashing, no map lookup
+```
+
+### Common Mistakes
+
+```cpp
+// ❌ WRONG - Runtime string lookup every call
+FGameplayTag MyTag = FGameplayTag::RequestGameplayTag(FName("Simulator.MiniGame.Type.Lockpick"));
+
+// ✅ CORRECT - Static cached reference
+FGameplayTag MyTag = FWWTagLibrary::Simulator_MiniGame_Type_Lockpick();
+```
+
+### Plugin Tag Prefixes
+
+| Plugin | Prefix | Example |
+|--------|--------|---------|
+| SharedDefaults | Movement.*, Character.* | Movement.Stance.Standing |
+| ModularPlayerController | Camera.* | Camera.Mode.TPS |
+| ModularInventorySystem | Inventory.* | Inventory.Slot.MainHand |
+| SimulatorFramework | Simulator.* | Simulator.Device.State.Off |
+| AdvancedWidgetFramework | UI.* | UI.Widget.Category.HUD |
+| Input (global) | Input.* | Input.Numpad.0 |
+
+---
+
 **Location:** `D:\Unreal Projects (2nd Place)\CPPDrugLordClone\WW_LEARNING_MODE.md`

@@ -141,5 +141,74 @@ SharedDefaults/ManagedWidgetInterface.h (merged IsValidWidget)
 
 ---
 
-*Generated: Feb 2, 2026*
+# SESSION 2: MiniGameHUD_Base + GameplayTag Governance
+
+## TASKS COMPLETED (Session 2)
+
+### Task 3: UMiniGameHUD_Base Implementation
+**STATUS: COMPLETE**
+
+| Deliverable | Status |
+|-------------|--------|
+| MiniGameHUD_Base.h | ✅ Created (SimulatorFramework/Public/UI/) |
+| MiniGameHUD_Base.cpp | ✅ Created (SimulatorFramework/Private/UI/) |
+| UI.Widget.Category tags registered | ✅ 5 tags added to DefaultGameplayTags.ini |
+
+**Key Features:**
+- Extends UManagedWidget_Master (Rule #46)
+- Located in SimulatorFramework/UI/ (Rule #47)
+- TWeakObjectPtr cached refs (Rule #41)
+- Binds to MiniGameComponent + MiniGameHandlerBase delegates
+- BlueprintNativeEvent for all lifecycle callbacks
+- Auto-show/hide with configurable delay
+
+---
+
+### Task 4: GameplayTag Governance (Golden Rule #48)
+**STATUS: COMPLETE**
+
+| Deliverable | Status |
+|-------------|--------|
+| Golden Rule #48 added | ✅ Tag Centralization |
+| GameplayTag Governance section | ✅ Full ARCHITECTURE section |
+| 5-step protocol documented | ✅ |
+| P3 Audit task created | ✅ 5 subtasks |
+
+**Key Principle:** All tags MUST exist in BOTH DefaultGameplayTags.ini AND WW_TagLibrary
+
+**Protocol Summary:**
+1. Register in DefaultGameplayTags.ini
+2. Define in WW_Internal namespace
+3. Declare accessor in WW_TagLibrary.h
+4. Implement accessor in WW_TagLibrary.cpp
+5. Use via FWWTagLibrary::Tag_Name()
+
+---
+
+## FILES UPDATED (Session 2)
+
+| File | Changes |
+|------|---------|
+| DefaultGameplayTags.ini | +5 UI.Widget.Category tags |
+| MiniGameHUD_Base.h | NEW - abstract widget base |
+| MiniGameHUD_Base.cpp | NEW - implementation |
+| ARCHITECTURE V2.13 | +Rule #48, +GameplayTag Governance section |
+| PROGRESS_TODO | +Rule #48, +P3 audit task (5 subtasks), metrics |
+| CLAUDE.md | +Rule #48, +common mistake |
+| WW_LEARNING_MODE.md | +GameplayTag pattern section |
+
+---
+
+## QUICK METRICS (Session 2)
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Golden Rules | 47 | 48 |
+| P2 Tasks | 25 | 24 |
+| P3 Tasks | 39 | 44 |
+| Total Tasks | 83 | 87 |
+
+---
+
+*Generated: Feb 2, 2026 (Session 2)*
 *Framework Version: 2.13.2*

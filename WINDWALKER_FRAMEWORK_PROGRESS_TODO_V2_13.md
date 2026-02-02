@@ -1,7 +1,7 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** February 2, 2026
-**Framework Version:** 2.13.2  
+**Last Updated:** February 2, 2026 (Session 2)
+**Framework Version:** 2.13.2
 **Author:** Windwalker Productions
 
 ---
@@ -333,14 +333,14 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | Total Plugins (Current) | 11 |
 | Total Plugins (Future) | 6 planned |
 | Phases Complete | 12/13 |
-| Golden Rules | 47 (in Architecture V2.13.2) |
+| Golden Rules | 48 (in Architecture V2.13.2) |
 | Interfaces | 8 |
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
-| P2 High | 25 (widget refactor + UI) |
-| P3 Medium | 39 (spawn, time, save, economy) |
+| P2 High | 24 (widget refactor + UI) |
+| P3 Medium | 44 (spawn, time, save, economy, tag audit) |
 | P4 Low | 11 (quest, marketplace) |
-| Total Remaining Tasks | 83 |
+| Total Remaining Tasks | 87 |
 | Total Helpers | 4 |
 | Total Handlers | 6 |
 | Documentation Pages | ~80 (Architecture V2.13) |
@@ -423,14 +423,14 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 | Task | Status | File | Notes |
 |------|--------|------|-------|
-| Create UMiniGameHUD_Base | ⬜ | SimulatorFramework | Base HUD for all minigames |
+| Create UMiniGameHUD_Base | ✅ | SimulatorFramework | Base HUD for all minigames |
 | Create UNumpadWidget | ⬜ | SimulatorFramework | Vault/keypad UI |
 | Create ULockpickWidget | ⬜ | SimulatorFramework | Sweetspot visualization |
 | Create UTimingWidget | ⬜ | SimulatorFramework | Rhythm/timing bar |
 | Create UTemperatureGauge | ⬜ | SimulatorFramework | Heat control UI |
 | Create UCalibrationWidget | ⬜ | SimulatorFramework | Precision meter |
 
-**Total P2 Tasks:** 25 (6 widget refactor + 7 inventory + 6 minigame + 6 hover/comparison)
+**Total P2 Tasks:** 24 (6 widget refactor + 7 inventory + 5 minigame + 6 hover/comparison)
 
 ---
 
@@ -522,7 +522,19 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 - Components announce in BeginPlay, revoke in EndPlay
 - No L2→L2 lateral dependencies
 
-**Total P3 Tasks:** 39 (2 editor + 6 economy + 12 spawn system + 10 save implementation + 9 time system)
+### GameplayTag Audit & Sync (NEW - Golden Rule #48)
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Fix Device.State prefix mismatch | ⬜ | WW_TagLibrary.cpp - "Device.State.*" → "Simulator.Device.State.*" |
+| Add MiniGame.ID accessors (12) | ⬜ | WW_TagLibrary.h/cpp |
+| Fix QuickSlot definitions (9) | ⬜ | WW_TagLibrary.cpp - all point to slot 0 |
+| Remove duplicate ini entries | ⬜ | DefaultGameplayTags.ini lines 95-101 |
+| Audit all RequestGameplayTag usage | ⬜ | Replace with FWWTagLibrary accessors |
+
+**Total:** 5 tasks
+
+**Total P3 Tasks:** 44 (2 editor + 6 economy + 12 spawn system + 10 save implementation + 9 time system + 5 tag audit)
 
 ---
 
@@ -564,7 +576,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 |----------|----|----|----|----|----| ----- |
 | Interface & Save Architecture | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
 | Widget Refactor (Architectural Fix) | 0 | 0 | 6 | 0 | 0 | 6 |
-| MiniGame UI | 0 | 0 | 6 | 0 | 0 | 6 |
+| MiniGame UI | 0 | 0 | 5 | 0 | 0 | 5 |
 | Multiplayer Testing | 0 | 8 | 0 | 0 | 0 | 8 (deferred) |
 | Widgets/UI | 0 | 0 | 7 | 0 | 0 | 7 |
 | Editor Tasks | 0 | 0 | 0 | 2 | 0 | 2 (deferred) |
@@ -572,10 +584,11 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | WeatherTimeManager Basic System | 0 | 0 | 0 | 9 | 0 | 9 |
 | Economy | 0 | 0 | 0 | 6 | 0 | 6 |
 | Save Implementation | 0 | 0 | 0 | 10 | 0 | 10 (deferred) |
+| GameplayTag Audit & Sync | 0 | 0 | 0 | 5 | 0 | 5 |
 | Quest | 0 | 0 | 0 | 0 | 4 | 4 |
 | Marketplace | 0 | 0 | 0 | 0 | 5 | 5 |
 | Code Quality | 0 | 0 | 0 | 0 | 2 | 2 |
-| **TOTAL** | **0** | **8** | **25** | **39** | **11** | **83** |
+| **TOTAL** | **0** | **8** | **24** | **44** | **11** | **87** |
 
 ---
 
@@ -665,6 +678,42 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 - Framework repo (WWSimulatorFramework) = Plugins/ folder only
 - Game repo (CPPDrugLordTycoonClone) = Project root (all content)
 - Session briefings kept separate from ARCHITECTURE (clean specs)
+
+---
+
+### Session: MiniGameHUD_Base Implementation (February 2, 2026 - Session 2)
+
+| Task | Status | Deliverable |
+|------|--------|-------------|
+| Create UMiniGameHUD_Base | ✅ | SimulatorFramework/Public/UI/MiniGameHUD_Base.h/.cpp |
+| Fix UI.Widget.Category tag registration | ✅ | DefaultGameplayTags.ini (5 tags added) |
+
+**Tasks Completed:** 2
+**Files Created:** 2 (header + implementation)
+**Files Updated:** 2 (DefaultGameplayTags.ini, PROGRESS_TODO)
+**Key Features:**
+- Abstract base widget extending UManagedWidget_Master (Rule #46)
+- Located in SimulatorFramework/UI/ (Rule #47)
+- Cached refs with TWeakObjectPtr (Rule #41)
+- Delegate bindings to MiniGameComponent + MiniGameHandlerBase
+- BlueprintNativeEvent for all lifecycle callbacks
+- Auto-show/hide with configurable delay
+
+---
+
+### Session: GameplayTag Governance (February 2, 2026 - Session 2 continued)
+
+| Task | Status | Deliverable |
+|------|--------|-------------|
+| Golden Rule #48: GameplayTag Centralization | ✅ | 5-step protocol documented |
+| GameplayTag Governance section added | ✅ | Full ARCHITECTURE section |
+| Tag category prefix table | ✅ | 7 plugin prefixes documented |
+| P3 GameplayTag Audit task created | ✅ | 5 subtasks for cleanup |
+
+**Tasks Completed:** 4 documentation tasks
+**Golden Rules Added:** #48 (GameplayTag Centralization)
+**New P3 Tasks Added:** 5 (GameplayTag Audit & Sync)
+**Key Principle:** All tags MUST exist in BOTH DefaultGameplayTags.ini AND WW_TagLibrary
 
 ---
 

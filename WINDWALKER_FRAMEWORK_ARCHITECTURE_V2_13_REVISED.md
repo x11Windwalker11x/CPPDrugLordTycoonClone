@@ -12,8 +12,9 @@
 1. [Framework Overview](#framework-overview)
 2. [Complete Repository Structure](#complete-repository-structure)
 3. [Include Path Reference](#include-path-reference)
-4. [Golden Rules (Complete #1-47)](#golden-rules)
-5. [Plugin Architecture](#plugin-architecture)
+4. [Golden Rules (Complete #1-48)](#golden-rules)
+5. [GameplayTag Governance](#gameplay-tag-governance)
+6. [Plugin Architecture](#plugin-architecture)
 6. [Interface System](#interface-system)
 7. [Save System Architecture](#save-system-architecture)
 8. [Workflow Systems](#workflow-systems)
@@ -538,7 +539,7 @@ ModularCheatManager/
 
 ---
 
-## ⚡ GOLDEN RULES (Complete #1-47)
+## ⚡ GOLDEN RULES (Complete #1-48)
 
 ### Priority 1: Performance
 
@@ -668,6 +669,12 @@ ModularCheatManager/
 
 ---
 
+### GameplayTag Centralization
+
+**48. All GameplayTags MUST be registered in BOTH locations** — Every tag requires dual registration: (1) `Config/DefaultGameplayTags.ini` for engine registration/editor discovery, (2) `WW_TagLibrary.h/.cpp` for type-safe code access. NEVER use `FGameplayTag::RequestGameplayTag()` directly in code. Always use `FWWTagLibrary::Tag_Name()` accessor. 5-step protocol: register in ini → define in WW_Internal namespace → declare accessor in .h → implement accessor in .cpp → use via FWWTagLibrary.
+
+---
+
 ### AWF Architecture (Option B Decision)
 
 **AWF Delegate Registration Pattern:**
@@ -724,6 +731,103 @@ Shared UI state that replicates — spectator mirroring, co-op crafting stations
   - ModularInventorySystem: BoxSelectionWidget, InventorySlotDragDropOperation, inventory widgets
   - MSB: UWidgetDragDropOperation (generic base class in Operations/)
   - SimulatorFramework: MiniGame widgets, ApplicationBase
+
+---
+
+## 🏷️ GAMEPLAY TAG GOVERNANCE
+
+### Overview
+
+All GameplayTags in the Windwalker Framework are centralized in two locations:
+- **Registration:** `Config/DefaultGameplayTags.ini` (engine registration, editor discovery)
+- **Code Access:** `WW_TagLibrary.h/.cpp` in SharedDefaults (type-safe, compile-time validation)
+
+### Why Dual Registration?
+
+| Location | Purpose | Consumer |
+|----------|---------|----------|
+| DefaultGameplayTags.ini | Engine registration, editor tag picker discovery | Designers, Blueprint |
+| WW_TagLibrary | Type-safe access, static caching, compile-time validation | C++ code |
+
+### Tag Category Prefixes
+
+| Plugin | Tag Prefix | Example |
+|--------|------------|---------|
+| SharedDefaults | `Movement.*`, `Character.*` | `Movement.Stance.Standing` |
+| ModularPlayerController | `Camera.*` | `Camera.Mode.TPS` |
+| ModularInventorySystem | `Inventory.*` | `Inventory.Slot.MainHand` |
+| SimulatorFramework | `Simulator.*` | `Simulator.Device.State.Off` |
+| AdvancedWidgetFramework | `UI.*` | `UI.Widget.Category.HUD` |
+| ModularCheatManager | `Cheat.*` | `Cheat.Permission.Admin` |
+| Input (global) | `Input.*` | `Input.Numpad.0` |
+
+### 5-Step Protocol for Adding New Tags
+
+**STEP 1: Register in DefaultGameplayTags.ini**
+```ini
+; Location: Config/DefaultGameplayTags.ini
+; Add under appropriate "; --- Plugin: Category ---" comment
++GameplayTags=(Tag="Category.Subcategory.Name",DevComment="Description")
+```
+
+**STEP 2: Define in WW_TagLibrary.cpp (WW_Internal namespace)**
+```cpp
+// Location: WW_TagLibrary.cpp → namespace WW_Internal { }
+UE_DEFINE_GAMEPLAY_TAG(Category_Subcategory_Name, "Category.Subcategory.Name");
+```
+
+**STEP 3: Declare accessor in WW_TagLibrary.h**
+```cpp
+// Location: WW_TagLibrary.h → appropriate section
+static const FGameplayTag& Category_Subcategory_Name();
+```
+
+**STEP 4: Implement accessor in WW_TagLibrary.cpp**
+```cpp
+// Location: WW_TagLibrary.cpp → after namespace
+const FGameplayTag& FWWTagLibrary::Category_Subcategory_Name()
+{
+    static const FGameplayTag& Tag = WW_Internal::Category_Subcategory_Name;
+    return Tag;
+}
+```
+
+**STEP 5: Use via WW_TagLibrary accessor**
+```cpp
+// Usage
+FWWTagLibrary::Category_Subcategory_Name()
+// Include
+#include "Lib/Data/Tags/WW_TagLibrary.h"
+```
+
+### Naming Conventions
+
+| Element | Convention | Example |
+|---------|------------|---------|
+| Tag String | `Category.Subcategory.Name` | `Simulator.MiniGame.Type.Lockpick` |
+| Function Name | `Category_Subcategory_Name` | `Simulator_MiniGame_Type_Lockpick()` |
+| DevComment | Brief description | `"Lockpick mini-game type"` |
+
+### Common Mistakes
+
+❌ Using `FGameplayTag::RequestGameplayTag("Tag.Name")` directly
+✅ Using `FWWTagLibrary::Tag_Name()`
+
+❌ Adding tag to only one location
+✅ Adding to BOTH ini AND WW_TagLibrary
+
+❌ Mismatched tag strings between locations
+✅ Copy-paste exact string, verify match in all 4 locations
+
+### Validation Checklist (Before Commit)
+
+- [ ] Tag exists in `DefaultGameplayTags.ini`
+- [ ] Tag defined in `WW_Internal` namespace
+- [ ] Accessor declared in `WW_TagLibrary.h`
+- [ ] Accessor implemented in `WW_TagLibrary.cpp`
+- [ ] Tag string matches EXACTLY in all 4 locations
+- [ ] Function name matches tag hierarchy (dots → underscores)
+- [ ] No `RequestGameplayTag()` calls in new code
 
 ---
 
@@ -2224,7 +2328,7 @@ git reset --hard origin/main
 
 **Documentation:** ✅ Complete with file paths + workflow protocols
 
-**Rules:** ✅ 47 Golden Rules (#1-47)
+**Rules:** ✅ 48 Golden Rules (#1-47)
 
 **Plugins:** ✅ 11 plugins mapped
 
