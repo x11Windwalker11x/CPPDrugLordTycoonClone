@@ -478,8 +478,8 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 |------|--------|-------|
 | Create DT_MiniGames DataTable | ⬜ | Example rows for all handler types |
 | Create test level for MiniGames | ⬜ | Vault, lock, cooking stations |
-| Move WDGT_DefaultInteractionPrompt.uasset | ⬜ | AWF/Content/ → ModularInteractionSystem/Content/UI/ (Editor only) |
-| Move WDGT_DefaultPreInteractionPrompt.uasset | ⬜ | AWF/Content/ → ModularInteractionSystem/Content/UI/ (Editor only) |
+| Move WBP_InteractionPrompt.uasset | ⬜ | AWF/Content/ → ModularInteractionSystem/Content/UI/ (Editor only) |
+| Move WBP_PreInteractionPrompt.uasset | ⬜ | AWF/Content/ → ModularInteractionSystem/Content/UI/ (Editor only) |
 
 ### ModularEconomyPlugin (Future)
 
@@ -560,7 +560,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 - Components announce in BeginPlay, revoke in EndPlay
 - No L2→L2 lateral dependencies
 
-**Total P3 Tasks:** 39 (2 editor + 6 economy + 12 spawn system + 10 save implementation + 9 time system)
+**Total P3 Tasks:** 39 (4 editor + 6 economy + 12 spawn system + 10 save implementation + 9 time system - 2 overlap)
 
 ---
 

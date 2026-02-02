@@ -85,8 +85,7 @@ Windwalker_Productions_SharedDefaults/
 │   │       └── SimulatorDelegates.h
 │   ├── Interfaces/
 │   │   ├── AdvancedWidgetFramework/
-│   │   │   ├── ManagedWidgetInterface.h
-│   │   │   └── ValidWidgetInterface.h
+│   │   │   └── ManagedWidgetInterface.h
 │   │   ├── ModularInteractionSystem/
 │   │   │   ├── InteractableInterface.h
 │   │   │   └── InteractorInterface.h
@@ -162,6 +161,8 @@ ModularSystemsBase/
 │   │   ├── CrafterComponent_Master.h
 │   │   ├── DataTableOverwritableComponent.h
 │   │   └── DurabilityComponent.h
+│   ├── Operations/
+│   │   └── WidgetDragDropOperation.h
 │   ├── Subsystems/
 │   │   ├── AdvancedWidgetFramework/
 │   │   │   └── WidgetManagerBase.h
@@ -261,10 +262,17 @@ ModularInteractionSystem/
 │   │   ├── InteractableComponent.h
 │   │   ├── InteractorComponent.h
 │   │   └── OutlineComponent.h
+│   ├── UI/
+│   │   ├── Widget_InteractionPrompt.h
+│   │   └── Widget_PreInteraction.h
 │   ├── InteractablePriorityStruct.h
 │   ├── InteractionSubsystem.h
 │   ├── ModularInteractionSystem.h
 │   └── SpatialHashGrid.h
+├── Source/ModularInteractionSystem/Private/
+│   └── UI/
+│       ├── Widget_InteractionPrompt.cpp
+│       └── Widget_PreInteraction.cpp
 └── Intermediate/Build/Win64/UnrealEditor/Inc/ModularInteractionSystem/UHT/
     ├── AIInteractorComponnet.generated.h
     ├── InteractableComponent.generated.h
@@ -301,10 +309,16 @@ ModularInventorySystem/
 │   │   │   ├── InventorySearchSortWidget.h
 │   │   │   ├── SearchSortWidget_Master.h
 │   │   │   └── WW_SearchResultEntryWidget.h
+│   │   ├── Operations/
+│   │   │   └── InventorySlotDragDropOperation.h
+│   │   ├── BoxSelectionWidget.h
 │   │   ├── InventoryGridWidget.h
 │   │   ├── InventoryResizableWindowWidget.h
 │   │   ├── InventorySlotWidget.h
 │   │   └── RootWidget.h
+│   ├── Private/
+│   │   └── UI/
+│   │       └── BoxSelectionWidget.cpp
 │   ├── ModularInventoryInteractableSystem.h
 │   └── PickUpActor.h
 └── Intermediate/Build/Win64/UnrealEditor/Inc/ModularInventoryInteractableSystem/UHT/
@@ -365,25 +379,14 @@ SimulatorFramework/
 ```
 AdvancedWidgetFramework/
 ├── Source/AdvancedWidgetFramework/Public/
-│   ├── Interaction/
-│   │   ├── BoxSelectionWidget.h
-│   │   ├── Widget_InteractionPrompt.h
-│   │   └── Widget_PreInteraction.h
 │   ├── MasterWidgets/
 │   │   └── ManagedWidget_Master.h
-│   ├── Operations/
-│   │   └── AWF_DragDropOperation.h
 │   ├── Subsystems/
 │   │   └── WidgetManager.h
 │   └── AdvancedWidgetFramework.h
 └── Intermediate/Build/Win64/UnrealEditor/Inc/AdvancedWidgetFramework/UHT/
-    ├── AWF_DragDropOperation.generated.h
-    ├── BoxSelectionWidget.generated.h
     ├── ManagedWidget_Master.generated.h
-    ├── ValidWidgetInterface.generated.h
-    ├── WidgetManager.generated.h
-    ├── Widget_InteractionPrompt.generated.h
-    └── Widget_PreInteraction.generated.h
+    └── WidgetManager.generated.h
 ```
 
 ### ModularSaveGameSystem (L2)
@@ -712,12 +715,13 @@ Shared UI state that replicates — spectator mirroring, co-op crafting stations
 - ✅ Interface count: 18 → 17
 - ✅ ValidWidgetInterface.h deleted
 
-**Widget Location Rule (NEW - Feb 2, 2026):**
+**Widget Location Rule (COMPLETE - Feb 2, 2026):**
 - Widgets belong in their OWNING PLUGIN's `UI/` folder
 - NOT in MSB or AWF (AWF only contains base classes)
 - Each plugin owns its domain-specific widgets:
-  - MIS: Widget_InteractionPrompt, Widget_PreInteraction, BoxSelectionWidget
-  - MIIS: Inventory widgets, AWF_DragDropOperation
+  - ModularInteractionSystem: Widget_InteractionPrompt, Widget_PreInteraction
+  - ModularInventorySystem: BoxSelectionWidget, InventorySlotDragDropOperation, inventory widgets
+  - MSB: UWidgetDragDropOperation (generic base class in Operations/)
   - SimulatorFramework: MiniGame widgets, ApplicationBase
 
 ---

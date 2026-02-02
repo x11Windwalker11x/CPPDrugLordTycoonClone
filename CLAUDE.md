@@ -45,6 +45,7 @@ WidgetManagerBase stays MSB permanently. AWF features register via delegates.
 - StateMachine: FWidgetStateMachine, UWidgetStateManager, UWidgetAnimation, interrupt rules
 - MPSync: IReplicatedWidgetInterface, UWidgetSyncSubsystem, spectator binding, delta compression
 - ✅ IValidWidgetInterface merged into IManagedWidgetInterface (Feb 2, 2026)
+- ✅ Widget Location Cleanup complete: widgets in owning plugin's UI/ folder (Feb 2, 2026)
 
 ## Naming
 `U`=UObject `A`=Actor `F`=struct `I`=interface `E`=enum | `bPrefix` bools | PascalCase funcs | camelCase locals
@@ -73,6 +74,7 @@ Steps: Create→Registry→include path→directory tree (Rules #42-45)
 ```
 START→Upload docs→Paste SESSION_STARTER→I plan→You approve→I write ADD
 IMPLEMENT→Claude Code→/compact at 70%→Output summary
+**BUILD→MANDATORY after all code changes→Fix errors before commit**
 VALIDATE→Paste summary→I verify→Mark complete
 END→Paste END_OF_SESSION→I generate briefing
 ```
