@@ -1,9 +1,8 @@
 # CLAUDE.md
-> **Priority #1:** Maximum effectiveness, no loss of information.
-> **Priority #2:** Minimal token usage. Reference full docs for details.
+> **P1:** Max effectiveness, no info loss. **P2:** Min tokens. See full docs for details.
 
 ## Project
-**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13
+**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.1
 
 ## Build
 ```bash
@@ -14,61 +13,82 @@
 | Layer | Plugin | Purpose |
 |-------|--------|---------|
 | L0 | SharedDefaults | Interfaces, delegates, structs, tags |
-| L0.5 | ModularSystemsBase | Shared components, subsystems, helpers |
-| L2 | MPC, MIS, MIIS, Crafting, Simulator, AWF, Save, Spawn, Cheat | Feature plugins (11 total) |
+| L0.5 | MSB | Shared components, subsystems, helpers |
+| L2 | MPC, MIS, MIIS, Crafting, Simulator, AWF, Save, Spawn, Cheat | 11 feature plugins |
 
-**Rule:** L2 never depends on L2. Communicate via L0 delegates only. Delete any L2 → others compile.
+**Rule:** L2→L2 forbidden. Communicate via L0 delegates. Delete any L2→others compile.
 
-## Core Patterns
+## Patterns
 ```cpp
 // Interface (never Cast<>)
 if (Actor->ImplementsInterface(UInterface::StaticClass()))
     IInterface::Execute_Method(Actor, Args);
-
-// Delegate (UP communication) | Tags: Plugin.Category.Sub (Input.* has no prefix)
+// Delegate (UP communication) | Tags: Plugin.Category.Sub (Input.* no prefix)
 ```
 
-## Golden Rules (46 total - see Architecture)
+## Golden Rules (47) - Key Subset
 | # | Rule |
 |---|------|
-| 1-4 | Performance: <0.02ms/component, async traces, no iteration, no allocation |
+| 1-4 | Perf: <0.02ms, async traces, no iteration, no allocation |
 | 5-8 | Modularity: Plugin independence, L0 contracts, DOWN deps/UP delegates |
-| 13-14 | Networking: Always add RPCs + replication |
+| 13-14 | Networking: Always RPCs + replication |
 | 25-32 | Interfaces: ImplementsInterface+Execute_, mandatory getter, <0.02ms |
-| 37-40 | Save: Two-tier delegate, unique SaveID, priority load order, dirty tracking |
+| 37-40 | Save: Two-tier delegate, unique SaveID, priority load, dirty tracking |
 | 41 | Cache subsystem refs in components |
-| 42-45 | Module creation requires doc update |
+| 42-45 | Module creation = doc update |
 | 46 | HUD widgets MUST use UManagedWidget_Master |
+| 47 | Widgets belong in owning plugin's UI/ folder (not MSB/AWF) |
+
+## AWF (Option B)
+WidgetManagerBase stays MSB permanently. AWF features register via delegates.
+**Deferred:** Pooling(P3), StateMachine(P3), MPSync(P3), Dockable(P4)
+- StateMachine: FWidgetStateMachine, UWidgetStateManager, UWidgetAnimation, interrupt rules
+- MPSync: IReplicatedWidgetInterface, UWidgetSyncSubsystem, spectator binding, delta compression
+- ✅ IValidWidgetInterface merged into IManagedWidgetInterface (Feb 2, 2026)
 
 ## Naming
 `U`=UObject `A`=Actor `F`=struct `I`=interface `E`=enum | `bPrefix` bools | PascalCase funcs | camelCase locals
 
 ## Includes
-Order: Own → SharedDefaults → MSB → Engine → `.generated.h` (always LAST)
+Order: Own→SharedDefaults→MSB→Engine→`.generated.h` LAST
 
 ## Module Creation (SharedDefaults)
-| Type | Path | Count |
-|------|------|-------|
-| Interface | `Public/Interfaces/<Plugin>/<Name>Interface.h` | 18 |
-| Delegate | `Public/Delegates/<Plugin>/<Name>Delegates.h` | 8 |
-| Data Struct | `Public/Lib/Data/<Plugin>/<Name>Data.h` | 14 |
+| Type | Path | # |
+|------|------|---|
+| Interface | `Public/Interfaces/<Plugin>/<n>Interface.h` | 17 |
+| Delegate | `Public/Delegates/<Plugin>/<n>Delegates.h` | 8 |
+| Data | `Public/Lib/Data/<Plugin>/<n>Data.h` | 14 |
 
-**Steps:** Create file → Add to Registry → Add include path → Update directory tree (Rules #42-45)
+Steps: Create→Registry→include path→directory tree (Rules #42-45)
 
-**Interface:** `SHAREDDEFAULTS_API`, mandatory `GetXComponent()`/`GetXActor()`, <0.02ms
+## Protocol Files
+| File | Purpose |
+|------|---------|
+| `WW_SESSION_STARTER.md` | Detect leftover, plan session |
+| `WW_CLAUDE_CODE_PROMPTS.md` | Copy-paste prompts for Claude Code |
+| `WW_END_OF_SESSION.md` | Generate briefing for next session |
+| `WW_LEARNING_MODE.md` | Deep C++ explanations |
 
-**Delegate:** Parameter order `Old, New`, fire AFTER the fact
+## Workflow
+```
+START→Upload docs→Paste SESSION_STARTER→I plan→You approve→I write ADD
+IMPLEMENT→Claude Code→/compact at 70%→Output summary
+VALIDATE→Paste summary→I verify→Mark complete
+END→Paste END_OF_SESSION→I generate briefing
+```
 
 ## Docs
-- `WINDWALKER_FRAMEWORK_ARCHITECTURE_V2.13_REVISED.md` - Full specs, rules, patterns
-- `WINDWALKER_FRAMEWORK_PROGRESS_TODO_V2_13.md` - Status, tasks, roadmap
+- `WINDWALKER_FRAMEWORK_ARCHITECTURE_V2_13_REVISED.md` - Full specs
+- `WINDWALKER_FRAMEWORK_PROGRESS_TODO_V2_13.md` - Tasks, roadmap
 
 ## Git
-Two repos: `Plugins/` = WWSimulatorFramework | Root = CPPDrugLordTycoonClone
+Two repos: `Plugins/`=WWSimulatorFramework | Root=CPPDrugLordTycoonClone
+`/git` setup | `/githelp` reference
 
-`/git` setup aliases | `/githelp` reference
-
-## Commands
-**`create command: <name>`** - Auto: Ask prompt → Create `.claude/commands/<name>.md` → Commit
-
-**`create shortcut: <name>`** - Auto: Create `BatchFiles/` scripts → Run setup → Commit
+## Common Mistakes
+❌ `Cast<>()` cross-plugin→interface+Execute_
+❌ L2→L2 dep→L0 delegate
+❌ Logic in structs→helpers
+❌ No networking→Always Server RPCs+replication
+❌ Wrong include order→`.generated.h` LAST
+❌ Widget without base→UManagedWidget_Master

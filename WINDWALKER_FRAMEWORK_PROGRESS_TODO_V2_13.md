@@ -1,7 +1,7 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** January 31, 2026
-**Framework Version:** 2.13
+**Last Updated:** February 2, 2026  
+**Framework Version:** 2.13.1  
 **Author:** Windwalker Productions
 
 ---
@@ -25,12 +25,13 @@
 
 The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem designed for AAA-level performance, maximum decoupling, and marketplace-ready distribution.
 
-**Current Status:** All core systems implemented. MiniGame system complete. Interface & Save System architecture finalized (V2.13). Widget System refactored. Module Creation Protocol standardized. **3 plugins incomplete:**
+**Current Status:** All core systems implemented. MiniGame system complete. Interface & Save System architecture finalized (V2.13). Workflow, learning, and QA systems documented. **4 plugins incomplete/need features:**
 - ModularSpawnSystem (30% - pickups only)
+- AdvancedWidgetFramework (base done, 4 features deferred: pooling, state machine, dockable, MP sync)
 - ModularSaveGameSystem (architecture only - no implementation)
 - WeatherTimeManager (basic day/night cycle planned - weather deferred)
 
-**Latest Milestone:** Phase 6.3 (Module Creation Protocol) - Complete
+**Latest Milestone:** Phase 6.1 (Interface & Save Architecture) - Complete
 
 ---
 
@@ -58,7 +59,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | ModularInteractionSystem | L2 | Traces, interactables, highlighting | ✅ Complete |
 | CraftingPlugin | L2 | Recipes, stations, crafting logic | ✅ Complete |
 | SimulatorFramework | L2 | Devices, applications, mini-games | ✅ Complete |
-| AdvancedWidgetFramework | L2 | Widget management, drag-drop | ✅ Complete (refactored) |
+| AdvancedWidgetFramework | L2 | Widget management, drag-drop | 🔄 Base done, 4 features deferred |
 | ModularSaveGameSystem | L2 | Save/load state | ✅ Architecture complete |
 | ModularSpawnSystem | L2 | Entity spawning, pooling | 🔄 Partial (pickups only) |
 | ModularCheatManager | L2 | Debug/cheat commands | ✅ Complete |
@@ -109,35 +110,71 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 
 **File Location:** `ModularSpawnSystem/Source/UniversalSpawnManager/`
 
-### AdvancedWidgetFramework (Architectural Violation - Needs Refactor)
+### AdvancedWidgetFramework (Base Done, 4 Features Deferred)
 
-**Status:** Base complete, but architectural violation identified
+**Status:** Base complete. WidgetManagerBase moved to MSB. 4 advanced features deferred.
 
-**Problem:**
-- WidgetManager currently lives in ModularInventorySystem
-- MiniGame + other systems need widget management too
-- Mixes generic widget ops (ShowWidget/HideWidget) with inventory-specific logic
-- Direct coupling to inventory types, slots, context menus
-
-**Required Refactor:**
-1. Create UWidgetManagerBase in ModularSystemsBase/AWF/
-2. Rename WidgetManager → InventoryWidgetManager in MIS
-3. InventoryWidgetManager extends UWidgetManagerBase
-4. Update all UWidgetManager::Get() calls → UInventoryWidgetManager::GetInventory()
-
-**Implemented (Base functionality):**
+**Completed:**
+- ✅ UWidgetManagerBase moved to MSB (shared infrastructure)
 - ✅ Widget lifecycle (ShowWidget, HideWidget)
-- ✅ Z-order management
-- ✅ Widget tracking
-- ✅ Active widget queries
+- ✅ Z-order management + tracking
+- ✅ AWF plugin shell exists
+- ✅ UManagedWidget_Master base class
 
-**Not Implemented (Extensions in MIS):**
-- ⬜ Selection mode management
-- ⬜ Quest combine mode
-- ⬜ Attachment mode
-- ⬜ Multi-selection support
+**Architecture Decision (Option B):**
+- WidgetManagerBase stays in MSB **permanently**
+- AWF's 4 features register INTO WidgetManagerBase via delegates at runtime
+- Same two-tier pattern as Save System (Rule #37)
+- Delete AWF → graceful degradation to basic show/hide
+- No compile-time L2→L2 coupling
 
-**File Location:** `ModularInventorySystem/Subsystems/WidgetManager.h` (needs to move base to MSB)
+**Deferred Feature 1: Widget Pooling System (P3)**
+High-frequency widget spawn/destroy (damage numbers, floating markers, notifications, kill feed).
+- ⬜ UWidgetPoolManager subsystem
+- ⬜ Pool configuration via DataTable (pool size, recycle timeout, eviction priority)
+- ⬜ Spatial widget sorting (screen-space clustering for overlapping popups)
+- ⬜ Priority eviction (oldest/lowest-priority recycled first when pool full)
+- ⬜ Integration hooks for: combat UI, quest UI, economy notifications, MiniGame feedback
+
+**Deferred Feature 2: Dockable/Composable Layout Engine (P4)**
+Widgets arranged into panels, split views, tabbed containers. Player-rearrangeable dock zones.
+- ⬜ UDockZone actor/component (placeable dock targets)
+- ⬜ UDockableWidget base class (widgets that can be docked/undocked)
+- ⬜ Split-view and tabbed container widgets
+- ⬜ Layout persistence (save/load dock arrangement)
+- ⬜ Conflict resolution (two widgets targeting same dock zone)
+
+**Deferred Feature 3: Widget State Machine Manager (P3)**
+Non-trivial widget transitions: `Closed → AnimatingIn → Visible → Paused → AnimatingOut → Closed`. Interrupt handling when multiple widgets conflict. Priority-based conflict resolution.
+- ⬜ FWidgetStateMachine struct (states, transitions, interrupts)
+- ⬜ UWidgetStateManager subsystem (runs state machines, resolves conflicts)
+- ⬜ UWidgetAnimation integration (transition animation per state change)
+- ⬜ Interrupt rules (configurable per widget: cancel, queue, or pause)
+- ⬜ Register state machine flow into WidgetManagerBase via delegate (OnShowRequested, OnHideRequested intercepted)
+
+**Deferred Feature 4: Multiplayer Widget Synchronization (P3)**
+Shared UI state that replicates — spectator mirroring, co-op crafting stations, auction houses. Generic widget replication infrastructure any plugin opts into.
+- ⬜ IReplicatedWidgetInterface (extends IManagedWidgetInterface)
+- ⬜ UWidgetSyncSubsystem (replicates widget state deltas, not full state)
+- ⬜ Server-authoritative widget ownership model
+- ⬜ Spectator binding system (observe another player's widget state)
+- ⬜ Bandwidth optimization (delta compression for widget properties)
+- ⬜ Register sync hooks into WidgetManagerBase via delegate (OnWidgetStateChanged intercepted for replication)
+
+**Deferred Interface Cleanup:**
+- ✅ IValidWidgetInterface → merged into IManagedWidgetInterface (Feb 2, 2026)
+- ✅ Added `IsValidWidget()` BlueprintNativeEvent to IManagedWidgetInterface
+- ✅ Interface count: 18 → 17
+
+**Widget Location Cleanup (Deferred - Feb 2, 2026):**
+- **Correct approach:** Widgets belong in their OWNING PLUGIN's `UI/` folder, NOT in MSB
+- Each plugin owns its widgets (e.g., interaction widgets → MIS, inventory widgets → MIIS)
+- ⬜ Widget_InteractionPrompt → move to MIS/UI/
+- ⬜ Widget_PreInteraction → move to MIS/UI/
+- ⬜ AWF_DragDropOperation → move to MIIS (carries FInventorySlot data)
+- ✅ BoxSelectionWidget → already in MIS (correct location)
+
+**File Location:** `AdvancedWidgetFramework/` (plugin shell + UManagedWidget_Master)
 
 ### ModularSaveGameSystem (Architecture Complete, Implementation Deferred)
 
@@ -222,9 +259,8 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | 5.8 | Crafting Integration | ✅ COMPLETE | Jan 24, 2026 |
 | 5.9 | SimulatorFramework Expansion | ✅ COMPLETE | Jan 24, 2026 |
 | 6.0 | MiniGame System | ✅ COMPLETE | Jan 25, 2026 |
-| 6.1 | Interface & Save Architecture | ✅ COMPLETE | Jan 27, 2026 |
-| 6.2 | Widget System Refactor | ✅ COMPLETE | Jan 31, 2026 |
-| **6.3** | **Module Creation Protocol** | **✅ COMPLETE** | **Jan 31, 2026** |
+| **6.1** | **Interface & Save Architecture** | **✅ COMPLETE** | **Jan 27, 2026** |
+| 6.2 | Widget System Refactor | ⏸️ DEFERRED | — |
 
 ---
 
@@ -302,13 +338,10 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | Save Architecture | Two-tier delegate (Registry L0.5 + SaveGame L2) |
 | SaveID Format | "Actor.Component.Instance" or "Class.Name" |
 | Dirty Tracking | Mark dirty on state change, clear on save |
-| .generated.h Files | Always LAST include, never document (UHT auto-generated) |
-| Module Creation | Create → Registry → Include Paths → Directory Tree |
-| Interface Export | Use SHAREDDEFAULTS_API, include mandatory getter |
 
 ### Golden Rules Reference
 
-**Complete Golden Rules (#1-46)** are documented in detail in:
+**Complete Golden Rules (#1-40)** are documented in detail in:
 📄 **WINDWALKER_FRAMEWORK_ARCHITECTURE_V2.13_REVISED.md**
 
 **Quick Summary:**
@@ -318,11 +351,9 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 - Networking (#13-14): Always add, always optimize
 - Tags & State (#15-18): GameplayTags, cached, proper naming
 - Naming (#19-24): UE5 conventions, PascalCase, camelCase
-- Interfaces (#25-32): Interface creation, scope, getters, no-casting
+- **Interfaces (#25-32):** ⭐ NEW - Interface creation, scope, getters, no-casting
 - Design Patterns (#33-36): Atomic Composition, research, ADD
-- Save System (#37-40): Two-tier, unique IDs, priority, dirty tracking
-- **Subsystem Access (#41):** ⭐ NEW - Cache subsystem refs in components
-- **Module Creation (#42-45):** ⭐ NEW - Doc update required for new modules
+- **Save System (#37-40):** ⭐ NEW - Two-tier, unique IDs, priority, dirty tracking
 
 *Refer to Architecture V2.13 for complete rule descriptions and examples.*
 
@@ -334,22 +365,20 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 |--------|-------|
 | Total Plugins (Current) | 11 |
 | Total Plugins (Future) | 6 planned |
-| Phases Complete | 14/15 |
-| Golden Rules | 46 (in Architecture V2.13) |
-| Interfaces | 18 |
-| Delegates | 8 |
-| Data Structs | 14 |
+| Phases Complete | 12/13 |
+| Golden Rules | 40 (in Architecture V2.13) |
+| Interfaces | 8 |
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
-| P2 High | 19 (UI widgets only - refactor complete) |
+| P2 High | 25 (widget refactor + UI) |
 | P3 Medium | 39 (spawn, time, save, economy) |
 | P4 Low | 11 (quest, marketplace) |
-| Total Remaining Tasks | 77 |
+| Total Remaining Tasks | 83 |
 | Total Helpers | 4 |
 | Total Handlers | 6 |
 | Documentation Pages | ~80 (Architecture V2.13) |
 | Repository Files Mapped | 200+ |
-| Incomplete Plugins | 3 (Spawn 30%, SaveGame architecture only, WeatherTime basic only) |
+| Incomplete Plugins | 4 (Spawn 30%, AWF refactor needed, SaveGame architecture only, WeatherTime basic only) |
 
 ---
 
@@ -396,20 +425,20 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 ## P2 — HIGH
 
-### Widget System Refactor — ✅ COMPLETE (January 31, 2026)
+### Widget System Refactor — ARCHITECTURAL VIOLATION (High Priority)
 
-**Problem:** WidgetManager in MIS but needed by multiple plugins — **RESOLVED**
+**Problem:** WidgetManager in MIS but needed by multiple plugins
 
 | Task | Status | File | Notes |
 |------|--------|------|-------|
-| Create UWidgetManagerBase | ✅ | ModularSystemsBase/AWF | Generic widget lifecycle, pooling, context menu |
-| Move generic functions to Base | ✅ | WidgetManagerBase.h/cpp | ShowWidget, HideWidget, RegisterWidget, tracking |
-| Create UInventoryWidgetManager | ✅ | ModularInventorySystem | Extends UWidgetManagerBase |
-| Move inventory-specific logic | ✅ | InventoryWidgetManager | Selection, combine, attachment modes |
-| Update all Get() call sites | ✅ | 15+ files | UWidgetManager::Get() → UInventoryWidgetManager::GetInventory() |
-| Delete old UWidgetManager | ✅ | AWF | Removed from AdvancedWidgetFramework |
+| Create UWidgetManagerBase | ⬜ | ModularSystemsBase/AWF | Generic widget lifecycle |
+| Move generic functions to Base | ⬜ | WidgetManagerBase.h/cpp | ShowWidget, HideWidget, tracking |
+| Create UInventoryWidgetManager | ⬜ | ModularInventorySystem | Extends UWidgetManagerBase |
+| Move inventory-specific logic | ⬜ | InventoryWidgetManager | Selection, combine, attachment modes |
+| Update all Get() call sites | ⬜ | Multiple files | UWidgetManager::Get() → UInventoryWidgetManager::GetInventory() |
+| Test MiniGame can extend Base | ⬜ | Manual | Verify independence |
 
-**Total:** 6 refactor tasks — **ALL COMPLETE**
+**Total:** 6 refactor tasks
 
 ### Widget Classes (Remaining from V2.10)
 
@@ -567,7 +596,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | Category | P0 | P1 | P2 | P3 | P4 | Total |
 |----------|----|----|----|----|----| ----- |
 | Interface & Save Architecture | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
-| Widget Refactor (Architectural Fix) | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE (6 tasks) |
+| Widget Refactor (Architectural Fix) | 0 | 0 | 6 | 0 | 0 | 6 |
 | MiniGame UI | 0 | 0 | 6 | 0 | 0 | 6 |
 | Multiplayer Testing | 0 | 8 | 0 | 0 | 0 | 8 (deferred) |
 | Widgets/UI | 0 | 0 | 7 | 0 | 0 | 7 |
@@ -579,7 +608,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | Quest | 0 | 0 | 0 | 0 | 4 | 4 |
 | Marketplace | 0 | 0 | 0 | 0 | 5 | 5 |
 | Code Quality | 0 | 0 | 0 | 0 | 2 | 2 |
-| **TOTAL** | **0** | **8** | **19** | **39** | **11** | **77** |
+| **TOTAL** | **0** | **8** | **25** | **39** | **11** | **83** |
 
 ---
 
@@ -634,7 +663,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | Design patterns extracted | ✅ | Atomic Composition, Research |
 | Learning system designed | ✅ | Pattern Recognition, Deep Dive, Review |
 | Quality assurance system established | ✅ | 5-layer validation |
-| Golden Rules expanded | ✅ | #1-46 complete |
+| Golden Rules expanded | ✅ | #1-40 complete |
 
 **Documentation Created:**
 - WINDWALKER_FRAMEWORK_ARCHITECTURE_V2.13_REVISED.md (~80 pages)
@@ -645,111 +674,10 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 - Learning system (3 modes)
 - Quality assurance (5 layers)
 
-**Tasks Completed:** 17 documentation tasks
-**Golden Rules Added:** #27-40 (14 new rules)
-**Plugin Count Updated:** 8 → 11 plugins
+**Tasks Completed:** 17 documentation tasks  
+**Golden Rules Added:** #27-40 (14 new rules)  
+**Plugin Count Updated:** 8 → 11 plugins  
 **Repository Files Mapped:** 200+
-
----
-
-### Phase 6.2: Widget System Refactor ✅ COMPLETE (January 31, 2026)
-
-| Task | Status | File |
-|------|--------|------|
-| Create UWidgetManagerBase | ✅ | ModularSystemsBase/Subsystems/AWF/ |
-| Add FWidgetRegistration struct | ✅ | WidgetManagerBase.h |
-| Add RegisterWidget pooling | ✅ | WidgetManagerBase.cpp |
-| Add HideWidgetByClass | ✅ | WidgetManagerBase.cpp |
-| Add generic context menu support | ✅ | WidgetManagerBase |
-| Create UInventoryWidgetManager | ✅ | ModularInventorySystem/Subsystems/ |
-| Add SetInventoryContextMenu (typed) | ✅ | InventoryWidgetManager |
-| Update MPC_GameMode | ✅ | UWidgetManagerBase references |
-| Update InteractableComponent | ✅ | UWidgetManagerBase references |
-| Update ModularPlayerController_Master | ✅ | UWidgetManagerBase references |
-| Update InventorySlotWidget | ✅ | UInventoryWidgetManager references |
-| Update InventoryGridWidget | ✅ | UInventoryWidgetManager references |
-| Update InventoryResizableWindowWidget | ✅ | UInventoryWidgetManager references |
-| Update SearchSortWidget_Master | ✅ | UInventoryWidgetManager references |
-| Update InteractableActor_Master | ✅ | UWidgetManagerBase references |
-| Delete old WidgetManager.h/cpp | ✅ | AdvancedWidgetFramework |
-
-**Tasks Completed:** 16
-**Files Modified:** 20+
-**Lines of Code:** ~400
-
-**Architectural Pattern Established:**
-- `UWidgetManagerBase` (L0.5): Generic widget lifecycle, pooling, context menu
-- `UInventoryWidgetManager` (L2): Inventory-specific selection, modes
-- Pattern: Cache `APlayerController*` as private member with `Get()` accessor
-- All L2 plugins now use `UWidgetManagerBase::Get()` for generic ops
-
----
-
-### Phase 6.3: Module Creation Protocol ✅ COMPLETE (January 31, 2026)
-
-| Task | Status | File |
-|------|--------|------|
-| Remove all Intermediate/Build sections from Architecture | ✅ | 10 sections removed |
-| Add UE Convention for .generated.h files | ✅ | Architecture |
-| Create Interface Registry (18 interfaces) | ✅ | Architecture |
-| Create Delegate Registry (8 delegates) | ✅ | Architecture |
-| Create Data Struct Registry (14 structs) | ✅ | Architecture |
-| Create Module Creation Protocol templates | ✅ | Architecture |
-| Add Golden Rules #42-45 | ✅ | Architecture |
-| Update Standard Include Patterns (complete) | ✅ | Architecture |
-| Update CLAUDE.md with Module Creation Protocol | ✅ | CLAUDE.md |
-| Update CLAUDE.md priorities | ✅ | CLAUDE.md |
-
-**Tasks Completed:** 10
-**Golden Rules Added:** #42-45 (4 new rules, total now 45)
-**Registries Created:** 3 (Interface, Delegate, Data Struct)
-
-**Documentation Updates:**
-- Interface Registry: 18 interfaces with include paths
-- Delegate Registry: 8 delegate files with include paths
-- Data Struct Registry: 14 data struct files with include paths
-- Module Creation Protocol: Templates for interfaces, delegates, structs, subsystems, components
-- CLAUDE.md: New priorities, Module Creation Protocol section, UE Conventions
-
-#### 📚 Learn Mode: Why Module Creation Protocol Matters
-
-**Problem Solved:**
-Before this phase, creating new interfaces/delegates/structs was ad-hoc. Developers would:
-- Create files without updating documentation
-- Forget to add include paths to reference sections
-- Leave directory trees outdated
-- Result: Documentation drift, confusion, wasted time searching
-
-**Pattern Recognition:**
-```cpp
-// ❌ BAD: Create interface, forget documentation
-// 6 months later: "Where is IMyInterface? What's the include path?"
-
-// ✅ GOOD: Module Creation Protocol
-// 1. Create → 2. Registry → 3. Include Paths → 4. Directory Tree
-// Result: Single source of truth, always findable
-```
-
-**Why .generated.h Convention Matters:**
-```cpp
-// ❌ BAD: Document .generated.h files
-// Problem: UHT regenerates these on every build
-// Documenting them = documenting build artifacts = stale docs
-
-// ✅ GOOD: Never document .generated.h
-// They're auto-generated, predictable, follow naming convention
-// Real source files are what matter
-```
-
-**Why Registries Matter:**
-| Without Registry | With Registry |
-|------------------|---------------|
-| Search entire codebase | Ctrl+F in one table |
-| Guess include paths | Copy exact path |
-| Miss interfaces | Complete inventory |
-| Duplicate work | See what exists |
-
-**Key Insight:** Documentation is code. If you create a module but don't update docs, you've created technical debt. Rules #42-45 make doc updates mandatory, not optional.
 
 ---
 
@@ -759,8 +687,7 @@ Before this phase, creating new interfaces/delegates/structs was ad-hoc. Develop
 |------|----------|----------------|----------|
 | Inline formulas in structs | FStationInstanceData, FToolInstanceData | Should call UProgressionHelpers | P3 |
 | RequestGameplayTag in type helpers | FItemData::IsRangedWeapon() etc. | Should use cached tags from WW_TagLibrary | P3 |
-| Interaction widgets in wrong plugin | AWF/Interaction/ | Widget_InteractionPrompt, Widget_PreInteraction should move to MIS/UI/ for consistency with MIS pattern | P3 |
-| Interaction widgets not inheriting ManagedWidget_Master | AWF/Interaction/ | Should inherit UManagedWidget_Master per Rule #46 Tier 2 | P2 |
+| WidgetManager architectural violation | AdvancedWidgetFramework | Inventory-specific logic in base manager, needs split | P2 |
 
 ---
 
@@ -786,35 +713,55 @@ Before this phase, creating new interfaces/delegates/structs was ad-hoc. Develop
 
 ## 🚀 NEXT STEPS
 
+### Session Note (Feb 2, 2026)
+**AWF Focus Session** - IValidWidgetInterface merged into IManagedWidgetInterface.
+- ✅ Task 1: IValidWidgetInterface Removal (COMPLETE)
+  - Added `IsValidWidget()` BlueprintNativeEvent to IManagedWidgetInterface
+  - Updated Widget_InteractionPrompt to use IManagedWidgetInterface
+  - Deleted ValidWidgetInterface.h
+  - Interface count: 18 → 17
+- ⏸️ Task 2: Widget Location Cleanup (DEFERRED)
+  - Correct approach documented: widgets go to owning plugin's UI/ folder
+  - NOT to MSB - each plugin owns its widgets
+- ⬜ Remaining AWF tasks queued
+
 ### Recommended Options
 
 | Option | Priority | Tasks | Estimated Time | Notes |
 |--------|----------|-------|----------------|-------|
-| **A: Widget Refactor** | P2 | 5 | 4-6 hours | Architectural fix, enables MiniGame UI |
-| **B: Widget UI Implementation** | P2 | 14 | 8-12 hours | After refactor complete |
-| **C: Save Implementation** | P3 | 10 | 6-8 hours | After all stateful systems finalized |
-| **D: Economy Plugin** | P3 | 6 | 4-6 hours | New plugin, well-scoped |
-| **E: Quest System** | P4 | 4 | 3-4 hours | Consumes existing ObjectiveTracker |
+| **A: IValidWidgetInterface Removal** | P2 | 1 | ✅ DONE | Merged into IManagedWidgetInterface |
+| **B: Widget Location Cleanup** | P2 | 4 | 2-3 hours | Move widgets to MIS |
+| **C: Widget UI Implementation** | P2 | 14 | 8-12 hours | After cleanup complete |
+| **D: AWF Widget Pooling** | P3 | 3 | 4-6 hours | High-frequency UI lifecycle |
+| **E: AWF State Machine** | P3 | 3 | 4-6 hours | Complex widget transitions |
+| **F: AWF MP Widget Sync** | P3 | 3 | 4-6 hours | Spectator/co-op UI |
+| **G: Save Implementation** | P3 | 10 | 6-8 hours | After all stateful systems |
+| **H: Economy Plugin** | P3 | 6 | 4-6 hours | New plugin, well-scoped |
+| **I: AWF Dockable Layout** | P4 | 4 | 6-8 hours | Player-rearrangeable panels |
+| **J: Quest System** | P4 | 4 | 3-4 hours | Consumes ObjectiveTracker |
 
 ### Recommended Path
 
-**Path 1: UI-First**
-1. Widget Refactor (P2) — Fix architectural violation
-2. Inventory UI Widgets (P2) — Item preview, comparison
-3. MiniGame UI Widgets (P2) — HUD, numpad, lockpick, timing, temperature, calibration
-4. Testing Phase (P1) — Manual multiplayer validation
+**Path 1: UI-First (AWF Focus)**
+1. IValidWidgetInterface Removal (P2-A) — Interface cleanup
+2. Widget Location Cleanup (P2-B) — Move widgets to MIS
+3. Inventory UI Widgets (P2-C) — Item preview, comparison
+4. AWF Widget Pooling (P3-D) — Registers into WidgetManagerBase
+5. MiniGame UI Widgets (P2-C) — HUD, numpad, lockpick
+6. Testing Phase (P1) — Manual multiplayer validation
 
 **Path 2: Systems-First**
-1. Economy Plugin (P3) — Financial/resource tracking
-2. Save Implementation (P3) — Component serialization
-3. Quest System (P4) — Quest tracking via ObjectiveTracker
-4. UI Phase (P2) — All widgets after systems stable
+1. Economy Plugin (P3-H) — Financial/resource tracking
+2. Save Implementation (P3-G) — Component serialization
+3. Quest System (P4-J) — Quest tracking via ObjectiveTracker
+4. UI Phase (P2-C) — All widgets after systems stable
 
 **Path 3: Balanced**
-1. Widget Refactor (P2) — Fix architecture
-2. Economy Plugin (P3) — New system
-3. Inventory UI (P2) — High-value widgets
-4. Save Implementation (P3) — Cross-cutting concern
+1. IValidWidgetInterface Removal (P2-A) — Quick cleanup
+2. Economy Plugin (P3-H) — New system
+3. Inventory UI (P2-C) — High-value widgets
+4. AWF Widget Pooling (P3-D) — Performance feature
+5. Save Implementation (P3-G) — Cross-cutting concern
 
 ---
 
@@ -822,12 +769,10 @@ Before this phase, creating new interfaces/delegates/structs was ad-hoc. Develop
 
 | Metric | Value |
 |--------|-------|
-| Phases Complete | 14/15 |
+| Phases Complete | 12/13 |
 | Plugins | 11 |
-| Golden Rules | 46 (complete) |
-| Interfaces | 18 |
-| Delegates | 8 |
-| Data Structs | 14 |
+| Golden Rules | 47 (complete) |
+| Interfaces | 17 |
 | Handlers | 6 |
 | P0 Blockers | 0 |
 | Ready for Implementation | ✅ YES |
@@ -853,14 +798,18 @@ Before this phase, creating new interfaces/delegates/structs was ad-hoc. Develop
 
 **What's documented but not implemented:**
 - ⏸️ Save/load system (architecture complete, implementation pending)
-- ⏸️ Widget system refactor (architectural issue identified, fix pending)
+- ⏸️ AWF Widget Pooling (P3 - registers into WidgetManagerBase via delegates)
+- ⏸️ AWF Widget State Machine (P3 - complex transitions beyond binary show/hide)
+- ⏸️ AWF MP Widget Sync (P3 - spectator mirroring, co-op shared UI)
+- ⏸️ AWF Dockable Layout (P4 - player-rearrangeable panels)
+- ✅ IValidWidgetInterface removal (merged into IManagedWidgetInterface - Feb 2, 2026)
 - ⬜ Economy system (planned)
 - ⬜ Quest system (planned)
 - ⬜ UI widgets (planned)
 
 ---
 
-*Document Version: 2.13 (Merged)*
-*Last Updated: January 31, 2026*
-*Framework Version: 2.13*
+*Document Version: 2.13.1*  
+*Last Updated: February 2, 2026*  
+*Framework Version: 2.13.1*  
 *Author: Windwalker Productions*
