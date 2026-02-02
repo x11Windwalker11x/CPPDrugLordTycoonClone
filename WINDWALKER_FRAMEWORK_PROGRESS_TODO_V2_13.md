@@ -166,13 +166,16 @@ Shared UI state that replicates — spectator mirroring, co-op crafting stations
 - ✅ Added `IsValidWidget()` BlueprintNativeEvent to IManagedWidgetInterface
 - ✅ Interface count: 18 → 17
 
-**Widget Location Cleanup (Deferred - Feb 2, 2026):**
-- **Correct approach:** Widgets belong in their OWNING PLUGIN's `UI/` folder, NOT in MSB
+**Widget Location Cleanup (Complete - Feb 2, 2026):**
+- **Approach:** Widgets belong in their OWNING PLUGIN's `UI/` folder, NOT in MSB/AWF
 - Each plugin owns its widgets (e.g., interaction widgets → MIS, inventory widgets → MIIS)
-- ⬜ Widget_InteractionPrompt → move to MIS/UI/
-- ⬜ Widget_PreInteraction → move to MIS/UI/
-- ⬜ AWF_DragDropOperation → move to MIIS (carries FInventorySlot data)
-- ✅ BoxSelectionWidget → already in MIS (correct location)
+- ✅ Widget_InteractionPrompt → moved to ModularInteractionSystem/UI/
+- ✅ Widget_PreInteraction → moved to ModularInteractionSystem/UI/
+- ✅ AWF_DragDropOperation → moved to MSB/Operations/ as UWidgetDragDropOperation (base class)
+- ✅ UInventorySlotDragDropOperation → extracted to MIS/UI/Operations/ (inventory-specific)
+- ✅ BoxSelectionWidget → moved to MIS/UI/
+- ✅ ModularInteractionSystem AWF dependency removed
+- ⏸️ Blueprint .uasset files deferred (requires Editor move, not filesystem)
 
 **File Location:** `AdvancedWidgetFramework/` (plugin shell + UManagedWidget_Master)
 
@@ -475,6 +478,8 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 |------|--------|-------|
 | Create DT_MiniGames DataTable | ⬜ | Example rows for all handler types |
 | Create test level for MiniGames | ⬜ | Vault, lock, cooking stations |
+| Move WDGT_DefaultInteractionPrompt.uasset | ⬜ | AWF/Content/ → ModularInteractionSystem/Content/UI/ (Editor only) |
+| Move WDGT_DefaultPreInteractionPrompt.uasset | ⬜ | AWF/Content/ → ModularInteractionSystem/Content/UI/ (Editor only) |
 
 ### ModularEconomyPlugin (Future)
 
@@ -714,15 +719,21 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 ## 🚀 NEXT STEPS
 
 ### Session Note (Feb 2, 2026)
-**AWF Focus Session** - IValidWidgetInterface merged into IManagedWidgetInterface.
+**AWF Focus Session** - IValidWidgetInterface merged, Widget Location Cleanup complete.
 - ✅ Task 1: IValidWidgetInterface Removal (COMPLETE)
   - Added `IsValidWidget()` BlueprintNativeEvent to IManagedWidgetInterface
   - Updated Widget_InteractionPrompt to use IManagedWidgetInterface
   - Deleted ValidWidgetInterface.h
   - Interface count: 18 → 17
-- ⏸️ Task 2: Widget Location Cleanup (DEFERRED)
-  - Correct approach documented: widgets go to owning plugin's UI/ folder
-  - NOT to MSB - each plugin owns its widgets
+- ✅ Task 2: Widget Location Cleanup (C++ COMPLETE)
+  - UWidgetDragDropOperation moved to MSB/Operations/ (base class)
+  - UInventorySlotDragDropOperation extracted to MIS/UI/Operations/
+  - Widget_InteractionPrompt moved to ModularInteractionSystem/UI/
+  - Widget_PreInteraction moved to ModularInteractionSystem/UI/
+  - BoxSelectionWidget moved to MIS/UI/
+  - ModularInteractionSystem.Build.cs AWF dependency removed
+  - ModularInteractionSystem.uplugin AWF dependency removed
+  - ⏸️ Blueprint .uasset files deferred (requires Editor move)
 - ⬜ Remaining AWF tasks queued
 
 ### Recommended Options
@@ -730,7 +741,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | Option | Priority | Tasks | Estimated Time | Notes |
 |--------|----------|-------|----------------|-------|
 | **A: IValidWidgetInterface Removal** | P2 | 1 | ✅ DONE | Merged into IManagedWidgetInterface |
-| **B: Widget Location Cleanup** | P2 | 4 | 2-3 hours | Move widgets to MIS |
+| **B: Widget Location Cleanup** | P2 | 6 | ✅ C++ DONE | Blueprint assets deferred (Editor) |
 | **C: Widget UI Implementation** | P2 | 14 | 8-12 hours | After cleanup complete |
 | **D: AWF Widget Pooling** | P3 | 3 | 4-6 hours | High-frequency UI lifecycle |
 | **E: AWF State Machine** | P3 | 3 | 4-6 hours | Complex widget transitions |
@@ -743,8 +754,8 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 ### Recommended Path
 
 **Path 1: UI-First (AWF Focus)**
-1. IValidWidgetInterface Removal (P2-A) — Interface cleanup
-2. Widget Location Cleanup (P2-B) — Move widgets to MIS
+1. ~~IValidWidgetInterface Removal (P2-A)~~ — ✅ Interface cleanup DONE
+2. ~~Widget Location Cleanup (P2-B)~~ — ✅ C++ DONE, Blueprint deferred
 3. Inventory UI Widgets (P2-C) — Item preview, comparison
 4. AWF Widget Pooling (P3-D) — Registers into WidgetManagerBase
 5. MiniGame UI Widgets (P2-C) — HUD, numpad, lockpick
