@@ -2,7 +2,7 @@
 > **P1:** Max effectiveness, no info loss. **P2:** Min tokens. See full docs for details.
 
 ## Project
-**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.3
+**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.4
 
 ## Build
 ```bash
@@ -89,9 +89,9 @@ Two repos: `Plugins/`=WWSimulatorFramework | Root=CPPDrugLordTycoonClone
 `/git` setup | `/githelp` reference
 
 ## Doc Update Cascade
-ARCHITECTURE updated → Update PROGRESS_TODO (version, rules, metrics) + CLAUDE.md (version)
+ARCHITECTURE updated → Update PROGRESS_TODO (version, rules, metrics) + CLAUDE.md (version) + WW_CLAUDE_CODE_PROMPTS.md (version)
 Milestone completed → Update PROGRESS_TODO Completed Work section
-Session end → Generate WW_SESSION_BRIEFING_[DATE].md (keep separate, don't embed)
+Session end → Update WW_SESSION_STARTER.md (Last Session line) + Create WW_SESSION_BRIEFING_[DATE].md
 
 ## Common Mistakes
 ❌ `Cast<>()` cross-plugin→interface+Execute_

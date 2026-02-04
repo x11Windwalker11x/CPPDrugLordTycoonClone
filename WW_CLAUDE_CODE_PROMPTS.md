@@ -16,7 +16,7 @@
 
 ## WINDWALKER FRAMEWORK CONTEXT (auto-included)
 
-Framework: Windwalker V2.13.1, 11 plugins, UE5.6
+Framework: Windwalker V2.13.4, 11 plugins, UE5.6
 Rules: Performance <0.02ms, networking always, deps flow DOWN, comms flow UP
 Patterns: Helpers for logic, interfaces for capability, components for behavior
 Location: `D:\Unreal Projects (2nd Place)\CPPDrugLordClone\Plugins\`
@@ -27,7 +27,7 @@ Repos: WWSimulatorFramework (plugins), CPPDrugLordTycoonClone (game project)
 ## GENERIC SYSTEM PROMPT
 
 ```
-Implement [SYSTEM_NAME] for Windwalker Framework V2.13.1 following ADD approved in claude.ai.
+Implement [SYSTEM_NAME] for Windwalker Framework V2.13.4 following ADD approved in claude.ai.
 
 RULES:
 - Performance: <0.02ms overhead, use spatial hashing/caching
@@ -50,7 +50,7 @@ OUTPUT: Summary of files created + any architectural decisions made
 ### New Interface
 
 ```
-Create interface [INTERFACE_NAME] in SharedDefaults for Windwalker V2.13.1.
+Create interface [INTERFACE_NAME] in SharedDefaults for Windwalker V2.13.4.
 
 Location: Plugins/Windwalker_Productions_SharedDefaults/Source/Public/Interfaces/[PluginName]/
 Rules:
@@ -69,7 +69,7 @@ After creation:
 ### New Component
 
 ```
-Create component [COMPONENT_NAME] in [PLUGIN_NAME] for Windwalker V2.13.1.
+Create component [COMPONENT_NAME] in [PLUGIN_NAME] for Windwalker V2.13.4.
 
 Location: Plugins/[PluginName]/Source/Public/Components/
 Rules:
@@ -86,7 +86,7 @@ Include order: Own→SharedDefaults→MSB→Engine→.generated.h LAST
 ### New Helper Class
 
 ```
-Create helper [HELPER_NAME] in ModularSystemsBase for Windwalker V2.13.1.
+Create helper [HELPER_NAME] in ModularSystemsBase for Windwalker V2.13.4.
 
 Location: Plugins/ModularSystemsBase/Source/Public/Utilities/Helpers/[Category]/
 Rules:
@@ -100,7 +100,7 @@ Rules:
 ### Bug Fix
 
 ```
-Fix bug in [FILE_NAME] for Windwalker V2.13.1.
+Fix bug in [FILE_NAME] for Windwalker V2.13.4.
 
 ERROR LOG:
 [paste error]
