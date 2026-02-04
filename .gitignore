@@ -13,3 +13,5 @@ Build/
 *.lib
 *.exp
 Plugins/
+.claude/settings.local.json
+*.zip
