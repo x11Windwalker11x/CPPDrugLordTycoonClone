@@ -2247,6 +2247,38 @@ git reset --hard origin/main
 - ❌ Forget to push both repos when both have changes
 - ❌ Put .gitignore exclusions that block root content from Game repo (root content belongs in Game repo)
 
+### Path Validation Rules
+
+**Plugin files MUST be created at:**
+```
+Plugins/[PluginName]/Source/[PluginName]/[Public|Private]/[Category]/FileName.h
+```
+
+**NEVER create plugin folders at project root:**
+```
+❌ D:\...\CPPDrugLordClone\SimulatorFramework\
+✅ D:\...\CPPDrugLordClone\Plugins\SimulatorFramework\
+```
+
+**Pre-file-creation verification:**
+1. pwd shows `.../Plugins/[PluginName]/...`
+2. `git remote -v` shows WWSimulatorFramework
+
+**Pre-commit verification:**
+1. Run `BatchFiles/VerifyGitRepos.bat` to confirm remotes
+2. Plugin code → must show WWSimulatorFramework
+3. Game/docs → must show CppDrugLordTycoonClone
+
+### Recovery Checklist (If Misconfiguration Detected)
+
+- [ ] Backup local Plugins/ to temp location
+- [ ] Delete corrupted Plugins/.git or entire Plugins/
+- [ ] Clone fresh: `git clone WWSimulatorFramework Plugins`
+- [ ] Verify remote: `cd Plugins && git remote -v`
+- [ ] Restore local-only work from backup
+- [ ] Remove any plugin folders from game repo root
+- [ ] Push cleanup to game repo
+
 ---
 
 ## 🎯 APPENDIX: QUICK REFERENCE
@@ -2289,6 +2321,12 @@ git reset --hard origin/main
 ---
 
 ## 📋 VERSION HISTORY
+
+**V2.13.3** (February 4, 2026)
+- ✅ Added Path Validation Rules section (prevent plugin code in wrong repo)
+- ✅ Added Recovery Checklist for git misconfiguration
+- ✅ Created BatchFiles/VerifyGitRepos.bat verification script
+- ✅ Updated CLAUDE.md Common Mistakes with git path errors
 
 **V2.13.2** (February 2, 2026)
 - ✅ Added Git Repository Rules section (Two-repo architecture)

@@ -2,7 +2,7 @@
 > **P1:** Max effectiveness, no info loss. **P2:** Min tokens. See full docs for details.
 
 ## Project
-**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.2
+**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.3
 
 ## Build
 ```bash
@@ -101,3 +101,5 @@ Session end → Generate WW_SESSION_BRIEFING_[DATE].md (keep separate, don't emb
 ❌ Wrong include order→`.generated.h` LAST
 ❌ Widget without base→UManagedWidget_Master
 ❌ `RequestGameplayTag("Tag")`→FWWTagLibrary::Tag_Name()
+❌ Files at `SimulatorFramework/`→`Plugins/SimulatorFramework/`
+❌ Plugin code to game repo→verify `git remote -v` before commit
