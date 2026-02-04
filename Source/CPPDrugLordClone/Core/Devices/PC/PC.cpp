@@ -1,5 +1,6 @@
 // PC.cpp - FIXED VERSION with proper inheritance
 #include "PC.h"
+#include "Lib/Data/Tags/WW_TagLibrary.h"
 
 // ============================================================================
 // CONSTRUCTOR
@@ -79,7 +80,7 @@ void APC::OnPlayerNearbyInit_Implementation(APawn* PlayerPawn, const bool bIsNea
 		{
 			UDebugSubsystem::PrintDebug(
 				this,
-				FGameplayTag::RequestGameplayTag(FName("Debug.Interaction")),
+				FWWTagLibrary::Debug_Interaction(),
 				TEXT("Prevented asset unload - computer interface is active"),
 				false
 			);
@@ -139,7 +140,7 @@ void APC::OnOpenComputerInterface(AController* User)
 		// Note: Using the static PrintDebug method
 		UDebugSubsystem::PrintDebug(
 			this,
-			FGameplayTag::RequestGameplayTag(FName("Debug.Interaction")),
+			FWWTagLibrary::Debug_Interaction(),
 			TEXT("Computer interface opened"),
 			false
 		);
@@ -190,7 +191,7 @@ void APC::RequestCloseDesktopUI()
 		{
 			UDebugSubsystem::PrintDebug(
 				this,
-				FGameplayTag::RequestGameplayTag(FName("Debug.Interaction")),
+				FWWTagLibrary::Debug_Interaction(),
 				FString::Printf(TEXT("Computer closed - Distance: %.1f, LoadDistance: %.1f, StillNearby: %s"), 
 					Distance, LoadDistance, bStillNearby ? TEXT("true") : TEXT("false")),
 				false
@@ -204,7 +205,7 @@ void APC::RequestCloseDesktopUI()
 	{
 		UDebugSubsystem::PrintDebug(
 			this,
-			FGameplayTag::RequestGameplayTag(FName("Debug.Interaction")),
+			FWWTagLibrary::Debug_Interaction(),
 			TEXT("Computer interface closed"),
 			false
 		);

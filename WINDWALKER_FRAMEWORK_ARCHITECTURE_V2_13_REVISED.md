@@ -732,6 +732,11 @@ Shared UI state that replicates — spectator mirroring, co-op crafting stations
   - MSB: UWidgetDragDropOperation (generic base class in Operations/)
   - SimulatorFramework: MiniGame widgets, ApplicationBase
 
+**QuickSlot Tag Fix (COMPLETE - Feb 4, 2026):**
+- Fixed WW_TagLibrary.cpp QuickSlot definitions: all were pointing to `.QuickSlot.0`
+- Now correctly numbered `.QuickSlot.0` through `.QuickSlot.9`
+- Each `Inventory_Slot_QuickSlot_N` variable maps to its correct tag string
+
 ---
 
 ## 🏷️ GAMEPLAY TAG GOVERNANCE
@@ -978,6 +983,13 @@ END (claude.ai)
 ├─ Paste: END_OF_SESSION content
 └─ I generate briefing for next session
 ```
+
+### Build Rule (CRITICAL)
+
+**NO builds or rebuilds unless user EXPLICITLY requests.**
+- Claude Code must NEVER auto-trigger builds after implementation
+- User controls when builds happen
+- Only build when user says: "build", "compile", "run build", etc.
 
 ### Workflow: Learning Mode
 
@@ -2321,6 +2333,13 @@ Plugins/[PluginName]/Source/[PluginName]/[Public|Private]/[Category]/FileName.h
 ---
 
 ## 📋 VERSION HISTORY
+
+**V2.13.4** (February 4, 2026)
+- ✅ Fixed QuickSlot tag definitions in WW_TagLibrary.cpp (.QuickSlot.0 through .QuickSlot.9)
+- ✅ Added Build Rule: NO builds/rebuilds unless user explicitly requests
+- ✅ Added 13 MiniGame.ID tag accessors to WW_TagLibrary
+- ✅ Removed duplicate Device.State/Application.State tags from DefaultGameplayTags.ini
+- ✅ Fixed PC.cpp RequestGameplayTag calls → FWWTagLibrary accessors
 
 **V2.13.3** (February 4, 2026)
 - ✅ Added Path Validation Rules section (prevent plugin code in wrong repo)
