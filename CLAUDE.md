@@ -2,7 +2,7 @@
 > **P1:** Max effectiveness, no info loss. **P2:** Min tokens. See full docs for details.
 
 ## Project
-**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.4
+**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.5
 
 ## Build
 ```bash
@@ -40,13 +40,12 @@ if (Actor->ImplementsInterface(UInterface::StaticClass()))
 | 47 | Widgets belong in owning plugin's UI/ folder (not MSB/AWF) |
 | 48 | Tags in BOTH ini+WW_TagLibrary; never RequestGameplayTag() |
 
-## AWF (Option B)
-WidgetManagerBase stays MSB permanently. AWF features register via delegates.
-**Deferred:** Pooling(P3), StateMachine(P3), MPSync(P3), Dockable(P4)
-- StateMachine: FWidgetStateMachine, UWidgetStateManager, UWidgetAnimation, interrupt rules
-- MPSync: IReplicatedWidgetInterface, UWidgetSyncSubsystem, spectator binding, delta compression
+## AWF (Option B - Complete V2.13.5)
+UWidgetManagerBase stays MSB permanently. UInventoryWidgetManager in MIS extends base.
+- ✅ Widget System Refactor complete: UWidgetManagerBase (MSB) + UInventoryWidgetManager (MIS) (Feb 6, 2026)
 - ✅ IValidWidgetInterface merged into IManagedWidgetInterface (Feb 2, 2026)
 - ✅ Widget Location Cleanup complete: widgets in owning plugin's UI/ folder (Feb 2, 2026)
+**Deferred:** Pooling(P3), StateMachine(P3), MPSync(P3), Dockable(P4)
 
 ## Naming
 `U`=UObject `A`=Actor `F`=struct `I`=interface `E`=enum | `bPrefix` bools | PascalCase funcs | camelCase locals
@@ -76,7 +75,7 @@ Steps: Create→Registry→include path→directory tree (Rules #42-45)
 START→Upload docs→Paste SESSION_STARTER→I plan→You approve→I write ADD
 IMPLEMENT→Claude Code→/compact at 70%→Output summary
 VALIDATE→Paste summary→I verify→Mark complete
-**BUILD→MANDATORY at end of session→Fix errors before commit**
+BUILD→ONLY when user explicitly requests ("build", "compile", "run build")
 END→Paste END_OF_SESSION→I generate briefing
 ```
 

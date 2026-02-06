@@ -1,7 +1,7 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** February 4, 2026
-**Framework Version:** 2.13.4
+**Last Updated:** February 6, 2026 (Widget System Refactor session)
+**Framework Version:** 2.13.5
 **Author:** Windwalker Productions
 
 ---
@@ -25,9 +25,8 @@
 
 The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem designed for AAA-level performance, maximum decoupling, and marketplace-ready distribution.
 
-**Current Status:** All core systems implemented. MiniGame system complete. Interface & Save System architecture finalized (V2.13). Workflow, learning, and QA systems documented. **4 plugins incomplete/need refactor:**
+**Current Status:** All core systems implemented. MiniGame system complete. Interface & Save System architecture finalized (V2.13). Workflow, learning, and QA systems documented. **3 plugins incomplete/need refactor:**
 - ModularSpawnSystem (30% - pickups only)
-- AdvancedWidgetFramework (architectural violation - needs base class split)
 - ModularSaveGameSystem (architecture only - no implementation)
 - WeatherTimeManager (basic day/night cycle planned - weather deferred)
 
@@ -59,7 +58,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | ModularInteractionSystem | L2 | Traces, interactables, highlighting | ✅ Complete |
 | CraftingPlugin | L2 | Recipes, stations, crafting logic | ✅ Complete |
 | SimulatorFramework | L2 | Devices, applications, mini-games | ✅ Complete |
-| AdvancedWidgetFramework | L2 | Widget management, drag-drop | ✅ Base complete |
+| AdvancedWidgetFramework | L2 | Widget management, drag-drop | ✅ Complete (V2.13.5) |
 | ModularSaveGameSystem | L2 | Save/load state | ✅ Architecture complete |
 | ModularSpawnSystem | L2 | Entity spawning, pooling | 🔄 Partial (pickups only) |
 | ModularCheatManager | L2 | Debug/cheat commands | ✅ Complete |
@@ -110,35 +109,28 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 
 **File Location:** `ModularSpawnSystem/Source/UniversalSpawnManager/`
 
-### AdvancedWidgetFramework (Architectural Violation - Needs Refactor)
+### AdvancedWidgetFramework (Complete - V2.13.5)
 
-**Status:** Base complete, but architectural violation identified
+**Status:** ✅ Architectural refactor complete
 
-**Problem:**
-- WidgetManager currently lives in ModularInventorySystem
-- MiniGame + other systems need widget management too
-- Mixes generic widget ops (ShowWidget/HideWidget) with inventory-specific logic
-- Direct coupling to inventory types, slots, context menus
+**Completed Refactor (V2.13.5 - Feb 6, 2026):**
+1. ✅ UWidgetManagerBase created in MSB (`ModularSystemsBase/Subsystems/AdvancedWidgetFramework/`)
+2. ✅ UInventoryWidgetManager created in MIS (extends UWidgetManagerBase)
+3. ✅ Old WidgetManager deleted from AWF
+4. ✅ All call sites updated (28 files)
+5. ✅ ManagedWidget_Master uses UWidgetManagerBase (proper L2→L0.5)
+6. ✅ InteractableComponent uses UWidgetManagerBase (proper L2→L0.5)
+7. ✅ No L2→L2 dependencies
 
-**Required Refactor:**
-1. Create UWidgetManagerBase in ModularSystemsBase/AWF/
-2. Rename WidgetManager → InventoryWidgetManager in MIS
-3. InventoryWidgetManager extends UWidgetManagerBase
-4. Update all UWidgetManager::Get() calls → UInventoryWidgetManager::GetInventory()
+**Architecture:**
+- `UWidgetManagerBase` (MSB L0.5): Generic lifecycle (Show/Hide/Register)
+- `UManagedWidget_Master` (AWF L2): Base widget class with category registration
+- `UInventoryWidgetManager` (MIS L2): Inventory-specific (selection modes, context menus)
 
-**Implemented (Base functionality):**
-- ✅ Widget lifecycle (ShowWidget, HideWidget)
-- ✅ Z-order management
-- ✅ Widget tracking
-- ✅ Active widget queries
-
-**Not Implemented (Extensions in MIS):**
-- ⬜ Selection mode management
-- ⬜ Quest combine mode
-- ⬜ Attachment mode
-- ⬜ Multi-selection support
-
-**File Location:** `ModularInventorySystem/Subsystems/WidgetManager.h` (needs to move base to MSB)
+**File Locations:**
+- `ModularSystemsBase/Subsystems/AdvancedWidgetFramework/WidgetManagerBase.h`
+- `AdvancedWidgetFramework/MasterWidgets/ManagedWidget_Master.h`
+- `ModularInventorySystem/Subsystems/InventoryWidgetManager.h`
 
 ### ModularSaveGameSystem (Architecture Complete, Implementation Deferred)
 
@@ -337,10 +329,10 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | Interfaces | 8 |
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
-| P2 High | 24 (widget refactor + UI) |
-| P3 Medium | 40 (spawn, time, save, economy, 1 tag audit remaining) |
+| P2 High | 16 (widget refactor + UI) |
+| P3 Medium | 39 (spawn, time, save, economy, tag audit complete) |
 | P4 Low | 11 (quest, marketplace) |
-| Total Remaining Tasks | 83 |
+| Total Remaining Tasks | 74 |
 | Total Helpers | 4 |
 | Total Handlers | 6 |
 | Documentation Pages | ~80 (Architecture V2.13) |
@@ -411,26 +403,26 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 | Task | Status | File |
 |------|--------|------|
-| Create UItemPreviewWidget_Base | ⬜ | AWF |
+| Create UItemPreviewWidget_Base | ✅ | AWF |
 | Create UItemComparisonWidget | ⬜ | ModularInventorySystem |
-| Create UComparisonStatRowWidget | ⬜ | ModularInventorySystem |
-| Add ShowWidgetAtCursor() | ⬜ | WidgetManager |
-| Add SetCompareMode() | ⬜ | WidgetManager |
-| Add GetHoveredInventorySlot() | ⬜ | WidgetManager |
-| Update InventorySlotWidget hover | ⬜ | ModularInventorySystem |
+| Create UComparisonStatRowWidget | ✅ | ModularInventorySystem |
+| Add ShowWidgetAtCursor() | ✅ | WidgetManager |
+| Add SetCompareMode() | ✅ | WidgetManager |
+| Add GetHoveredInventorySlot() | ✅ | WidgetManager |
+| Update InventorySlotWidget hover | ✅ | ModularInventorySystem |
 
 ### MiniGame UI Widgets
 
 | Task | Status | File | Notes |
 |------|--------|------|-------|
 | Create UMiniGameHUD_Base | ✅ | SimulatorFramework | Base HUD for all minigames |
-| Create UNumpadWidget | ⬜ | SimulatorFramework | Vault/keypad UI |
+| Create UNumpadWidget | ✅ | SimulatorFramework | Vault/keypad UI |
 | Create ULockpickWidget | ⬜ | SimulatorFramework | Sweetspot visualization |
-| Create UTimingWidget | ⬜ | SimulatorFramework | Rhythm/timing bar |
+| Create UTimingWidget | ✅ | SimulatorFramework | Rhythm/timing bar |
 | Create UTemperatureGauge | ⬜ | SimulatorFramework | Heat control UI |
 | Create UCalibrationWidget | ⬜ | SimulatorFramework | Precision meter |
 
-**Total P2 Tasks:** 24 (6 widget refactor + 7 inventory + 5 minigame + 6 hover/comparison)
+**Total P2 Tasks:** 18 (6 widget refactor + 1 inventory remaining + 5 minigame + 6 hover/comparison - 6 completed)
 
 ---
 
@@ -522,19 +514,19 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 - Components announce in BeginPlay, revoke in EndPlay
 - No L2→L2 lateral dependencies
 
-### GameplayTag Audit & Sync (NEW - Golden Rule #48)
+### GameplayTag Audit & Sync (NEW - Golden Rule #48) ✅ COMPLETE
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Fix Device.State prefix mismatch | ⬜ | WW_TagLibrary.cpp - "Device.State.*" → "Simulator.Device.State.*" |
+| Fix Device.State prefix mismatch | ✅ | WW_TagLibrary.cpp - Feb 6, 2026 |
 | Add MiniGame.ID accessors (13) | ✅ | WW_TagLibrary.h/cpp - Feb 4, 2026 |
 | Fix QuickSlot definitions (9) | ✅ | WW_TagLibrary.cpp - Feb 4, 2026 |
 | Remove duplicate ini entries | ✅ | DefaultGameplayTags.ini - Feb 4, 2026 |
 | Audit all RequestGameplayTag usage | ✅ | PC.cpp converted to FWWTagLibrary - Feb 4, 2026 |
 
-**Total:** 5 tasks (4 complete, 1 remaining)
+**Total:** 5 tasks (5 complete, 0 remaining)
 
-**Total P3 Tasks:** 40 (2 editor + 6 economy + 12 spawn system + 10 save implementation + 9 time system + 1 tag audit remaining)
+**Total P3 Tasks:** 39 (2 editor + 6 economy + 12 spawn system + 10 save implementation + 9 time system)
 
 ---
 
@@ -576,19 +568,19 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 |----------|----|----|----|----|----| ----- |
 | Interface & Save Architecture | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
 | Widget Refactor (Architectural Fix) | 0 | 0 | 6 | 0 | 0 | 6 |
-| MiniGame UI | 0 | 0 | 5 | 0 | 0 | 5 |
+| MiniGame UI | 0 | 0 | 3 | 0 | 0 | 3 |
 | Multiplayer Testing | 0 | 8 | 0 | 0 | 0 | 8 (deferred) |
-| Widgets/UI | 0 | 0 | 7 | 0 | 0 | 7 |
+| Widgets/UI | 0 | 0 | 1 | 0 | 0 | 1 (6 completed) |
 | Editor Tasks | 0 | 0 | 0 | 2 | 0 | 2 (deferred) |
 | ModularSpawnSystem Completion | 0 | 0 | 0 | 12 | 0 | 12 |
 | WeatherTimeManager Basic System | 0 | 0 | 0 | 9 | 0 | 9 |
 | Economy | 0 | 0 | 0 | 6 | 0 | 6 |
 | Save Implementation | 0 | 0 | 0 | 10 | 0 | 10 (deferred) |
-| GameplayTag Audit & Sync | 0 | 0 | 0 | 5 | 0 | 5 |
+| GameplayTag Audit & Sync | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
 | Quest | 0 | 0 | 0 | 0 | 4 | 4 |
 | Marketplace | 0 | 0 | 0 | 0 | 5 | 5 |
 | Code Quality | 0 | 0 | 0 | 0 | 2 | 2 |
-| **TOTAL** | **0** | **8** | **24** | **44** | **11** | **87** |
+| **TOTAL** | **0** | **8** | **16** | **39** | **11** | **74** |
 
 ---
 
