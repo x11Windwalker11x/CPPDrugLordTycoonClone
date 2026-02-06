@@ -1,6 +1,6 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** February 6, 2026 (P2 Widget Classes session)
+**Last Updated:** February 6, 2026 (AWF Deferred Features Complete session)
 **Framework Version:** 2.13.5
 **Author:** Windwalker Productions
 
@@ -58,7 +58,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | ModularInteractionSystem | L2 | Traces, interactables, highlighting | ✅ Complete |
 | CraftingPlugin | L2 | Recipes, stations, crafting logic | ✅ Complete |
 | SimulatorFramework | L2 | Devices, applications, mini-games | ✅ Complete |
-| AdvancedWidgetFramework | L2 | Widget management, drag-drop | ✅ Complete (V2.13.5) |
+| AdvancedWidgetFramework | L2 | Widget management, state machine, pooling, sync, docking | ✅ Complete (V2.13.5) |
 | ModularSaveGameSystem | L2 | Save/load state | ✅ Architecture complete |
 | ModularSpawnSystem | L2 | Entity spawning, pooling | 🔄 Partial (pickups only) |
 | ModularCheatManager | L2 | Debug/cheat commands | ✅ Complete |
@@ -261,7 +261,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 
 | System | Status | Notes |
 |--------|--------|-------|
-| Widget System Refactor | ⏸️ Deferred | Base + Inventory split needed |
+| ~~Widget System Refactor~~ | ~~✅ COMPLETE~~ | ~~V2.13.5 - Feb 6, 2026~~ |
 | Quest System | ⬜ P4 | Consumes ObjectiveTracker |
 | Economy System | ⬜ P3 | New plugin |
 | Save System Implementation | ⬜ P3 | Component serialization (cross-cutting) |
@@ -298,7 +298,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 
 ### Golden Rules Reference
 
-**Complete Golden Rules (#1-47)** are documented in detail in:
+**Complete Golden Rules (#1-48)** are documented in detail in:
 📄 **WINDWALKER_FRAMEWORK_ARCHITECTURE_V2.13_REVISED.md**
 
 **Quick Summary:**
@@ -329,15 +329,15 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | Interfaces | 8 |
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
-| P2 High | 16 (widget refactor + UI) |
+| P2 High | 0 (all complete) |
 | P3 Medium | 39 (spawn, time, save, economy, tag audit complete) |
 | P4 Low | 11 (quest, marketplace) |
-| Total Remaining Tasks | 74 |
+| Total Remaining Tasks | 58 |
 | Total Helpers | 4 |
 | Total Handlers | 6 |
 | Documentation Pages | ~80 (Architecture V2.13) |
 | Repository Files Mapped | 200+ |
-| Incomplete Plugins | 4 (Spawn 30%, AWF refactor needed, SaveGame architecture only, WeatherTime basic only) |
+| Incomplete Plugins | 3 (Spawn 30%, SaveGame architecture only, WeatherTime basic only) |
 
 ---
 
@@ -567,10 +567,10 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | Category | P0 | P1 | P2 | P3 | P4 | Total |
 |----------|----|----|----|----|----| ----- |
 | Interface & Save Architecture | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
-| Widget Refactor (Architectural Fix) | 0 | 0 | 6 | 0 | 0 | 6 |
-| MiniGame UI | 0 | 0 | 3 | 0 | 0 | 3 |
+| Widget Refactor (Architectural Fix) | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
+| MiniGame UI | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
 | Multiplayer Testing | 0 | 8 | 0 | 0 | 0 | 8 (deferred) |
-| Widgets/UI | 0 | 0 | 1 | 0 | 0 | 1 (6 completed) |
+| Widgets/UI | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
 | Editor Tasks | 0 | 0 | 0 | 2 | 0 | 2 (deferred) |
 | ModularSpawnSystem Completion | 0 | 0 | 0 | 12 | 0 | 12 |
 | WeatherTimeManager Basic System | 0 | 0 | 0 | 9 | 0 | 9 |
@@ -580,7 +580,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | Quest | 0 | 0 | 0 | 0 | 4 | 4 |
 | Marketplace | 0 | 0 | 0 | 0 | 5 | 5 |
 | Code Quality | 0 | 0 | 0 | 0 | 2 | 2 |
-| **TOTAL** | **0** | **8** | **16** | **39** | **11** | **74** |
+| **TOTAL** | **0** | **8** | **0** | **39** | **11** | **58** |
 
 ---
 
@@ -709,6 +709,31 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 ---
 
+### Session: AWF Deferred Features Complete (February 6, 2026 - Session 3)
+
+All 4 AWF deferred features implemented. Full L0→L0.5→L2 architecture with delegate-based interception.
+
+| Task | Status | Deliverable |
+|------|--------|-------------|
+| Widget State Machine Manager | ✅ | UWidgetStateManager (L2), FWidgetStateConfig/FWidgetStateMachineEntry (L0) |
+| Widget Pooling System | ✅ | UWidgetPoolManager (L2), FWidgetPoolConfig/FWidgetPoolStats (L0) |
+| MP Widget Synchronization | ✅ | UWidgetSyncSubsystem + UWidgetSyncComponent (L2), IReplicatedWidgetInterface (L0), FWidgetSyncPayload/FWidgetSyncDelta (L0) |
+| Dockable/Composable Layout Engine | ✅ | UDockLayoutManager + UDockZoneComponent (L2), IDockableWidgetInterface (L0), FDockZoneConfig/FDockableWidgetConfig/FDockLayout (L0) |
+| Audit against 48 Golden Rules | ✅ | 17 violations found, all code-level fixes applied |
+| Doc Update Cascade (Rules #42-45) | ✅ | Architecture doc registries updated, PROGRESS_TODO updated |
+| Tag Registration (Rule #48) | ✅ | UI.Dock.Zone parent tag in INI + WW_TagLibrary |
+
+**Tasks Completed:** 7
+**Files Created:** 14 (7 headers + 7 implementations)
+**Files Updated:** 8 (Build.cs, delegates, WidgetManagerBase, tags)
+**New L0 Interfaces:** 2 (IReplicatedWidgetInterface, IDockableWidgetInterface)
+**New L0 Data Structs:** 12 (across 4 data files)
+**New L0 Delegates:** 9 (widget state, pool, sync, dock)
+**New L2 Subsystems:** 4 (WidgetStateManager, WidgetPoolManager, WidgetSyncSubsystem, DockLayoutManager)
+**New L2 Components:** 2 (UWidgetSyncComponent, UDockZoneComponent)
+
+---
+
 ## ⚠️ KNOWN TECH DEBT
 
 | Item | Location | Why It Matters | Priority |
@@ -739,6 +764,10 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | Git two-repo architecture | Framework (Plugins/) separate from Game (root) for marketplace distribution |
 | Doc update cascade | Architecture changes trigger PROGRESS_TODO + CLAUDE.md updates |
 | Session data separate from specs | Session briefings kept as separate files, not embedded in ARCHITECTURE |
+| AWF deferred features: delegate interception | L2 features register INTO L0.5 WidgetManagerBase at runtime via single-cast delegates. Delete AWF → delegates unbound → graceful degradation |
+| AWF state machine: FTickableGameObject | ULocalPlayerSubsystem doesn't tick; add FTickableGameObject as second base. IsTickable() returns false when no work |
+| AWF dock system: IDockableWidgetInterface | L0 interface for dock callbacks. Zone filtering via FGameplayTagContainer. Parent tag UI.Dock.Zone for user-defined zones |
+| AWF MP sync: UWidgetSyncComponent on PC | Replicated component auto-created on PlayerController. Server RPCs for payload, client RPCs for receive. Delta-only replication |
 
 ---
 
@@ -748,19 +777,18 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 | Option | Priority | Tasks | Estimated Time | Notes |
 |--------|----------|-------|----------------|-------|
-| **A: Widget Refactor** | P2 | 5 | 4-6 hours | Architectural fix, enables MiniGame UI |
-| **B: Widget UI Implementation** | P2 | 14 | 8-12 hours | After refactor complete |
+| ~~**A: Widget Refactor**~~ | ~~P2~~ | ~~5~~ | | ~~✅ COMPLETE (Feb 6, 2026)~~ |
+| **B: Build & Test AWF** | P1 | 8+ | 4-6 hours | Compile + manual multiplayer validation |
 | **C: Save Implementation** | P3 | 10 | 6-8 hours | After all stateful systems finalized |
 | **D: Economy Plugin** | P3 | 6 | 4-6 hours | New plugin, well-scoped |
 | **E: Quest System** | P4 | 4 | 3-4 hours | Consumes existing ObjectiveTracker |
 
 ### Recommended Path
 
-**Path 1: UI-First**
-1. Widget Refactor (P2) — Fix architectural violation
-2. Inventory UI Widgets (P2) — Item preview, comparison
-3. MiniGame UI Widgets (P2) — HUD, numpad, lockpick, timing, temperature, calibration
-4. Testing Phase (P1) — Manual multiplayer validation
+**Path 1: Validate & Test**
+1. Build project — Compile all AWF changes (14 new files, 8 modified)
+2. Testing Phase (P1) — Manual multiplayer validation for all new subsystems
+3. Economy Plugin (P3) — Financial/resource tracking
 
 **Path 2: Systems-First**
 1. Economy Plugin (P3) — Financial/resource tracking
@@ -782,7 +810,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 |--------|-------|
 | Phases Complete | 12/13 |
 | Plugins | 11 |
-| Golden Rules | 47 (complete) |
+| Golden Rules | 48 (complete) |
 | Interfaces | 8 |
 | Handlers | 6 |
 | P0 Blockers | 0 |
@@ -809,14 +837,14 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 **What's documented but not implemented:**
 - ⏸️ Save/load system (architecture complete, implementation pending)
-- ⏸️ Widget system refactor (architectural issue identified, fix pending)
+- ~~⏸️ Widget system refactor~~ ✅ COMPLETE (V2.13.5 - Feb 6, 2026)
 - ⬜ Economy system (planned)
 - ⬜ Quest system (planned)
 - ⬜ UI widgets (planned)
 
 ---
 
-*Document Version: 2.13.2 (Merged)*
-*Last Updated: February 2, 2026*
-*Framework Version: 2.13.2*
+*Document Version: 2.13.5*
+*Last Updated: February 6, 2026*
+*Framework Version: 2.13.5*
 *Author: Windwalker Productions*

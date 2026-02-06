@@ -3,7 +3,7 @@
 **Comprehensive Framework Documentation**  
 **Date:** February 2, 2026  
 **Status:** Production Ready  
-**Revision:** V2.13.2 - Git Repository Rules, Two-repo architecture
+**Revision:** V2.13.5 - AWF Deferred Features Complete (State Machine, Pooling, MP Sync, Dockable)
 
 ---
 
@@ -87,7 +87,9 @@ Windwalker_Productions_SharedDefaults/
 │   │       └── SimulatorDelegates.h
 │   ├── Interfaces/
 │   │   ├── AdvancedWidgetFramework/
-│   │   │   └── ManagedWidgetInterface.h
+│   │   │   ├── ManagedWidgetInterface.h
+│   │   │   ├── ReplicatedWidgetInterface.h
+│   │   │   └── DockableWidgetInterface.h
 │   │   ├── ModularInteractionSystem/
 │   │   │   ├── InteractableInterface.h
 │   │   │   └── InteractorInterface.h
@@ -113,6 +115,11 @@ Windwalker_Productions_SharedDefaults/
 │   │       └── PhysicalInteractionInterface.h
 │   ├── Lib/
 │   │   ├── Data/
+│   │   │   ├── AdvancedWidgetFramework/
+│   │   │   │   ├── WidgetStateData.h
+│   │   │   │   ├── WidgetPoolData.h
+│   │   │   │   ├── WidgetSyncData.h
+│   │   │   │   └── DockableLayoutData.h
 │   │   │   ├── Core/
 │   │   │   │   ├── InputConfigData.h
 │   │   │   │   ├── ObjectiveData.h
@@ -380,15 +387,26 @@ SimulatorFramework/
 
 ```
 AdvancedWidgetFramework/
-├── Source/AdvancedWidgetFramework/Public/
-│   ├── MasterWidgets/
-│   │   └── ManagedWidget_Master.h
-│   ├── Subsystems/
-│   │   └── WidgetManager.h
-│   └── AdvancedWidgetFramework.h
-└── Intermediate/Build/Win64/UnrealEditor/Inc/AdvancedWidgetFramework/UHT/
-    ├── ManagedWidget_Master.generated.h
-    └── WidgetManager.generated.h
+├── Source/AdvancedWidgetFramework/
+│   ├── Public/
+│   │   ├── Components/
+│   │   │   └── DockZoneComponent.h
+│   │   ├── MasterWidgets/
+│   │   │   └── ManagedWidget_Master.h
+│   │   ├── Subsystems/
+│   │   │   ├── DockLayoutManager.h
+│   │   │   ├── WidgetPoolManager.h
+│   │   │   ├── WidgetStateManager.h
+│   │   │   └── WidgetSyncSubsystem.h
+│   │   └── AdvancedWidgetFramework.h
+│   └── Private/
+│       ├── Components/
+│       │   └── DockZoneComponent.cpp
+│       └── Subsystems/
+│           ├── DockLayoutManager.cpp
+│           ├── WidgetPoolManager.cpp
+│           ├── WidgetStateManager.cpp
+│           └── WidgetSyncSubsystem.cpp
 ```
 
 ### ModularSaveGameSystem (L2)
@@ -455,6 +473,9 @@ ModularCheatManager/
 #include "Interfaces/SimulatorFramework/DurabilityInterface.h"
 #include "Interfaces/ModularPlayerController/CameraControlInterface.h"
 #include "Interfaces/ModularSaveGameSystem/SaveableInterface.h"
+#include "Interfaces/AdvancedWidgetFramework/ManagedWidgetInterface.h"
+#include "Interfaces/AdvancedWidgetFramework/ReplicatedWidgetInterface.h"
+#include "Interfaces/AdvancedWidgetFramework/DockableWidgetInterface.h"
 ```
 
 **2. SharedDefaults Delegates:**
@@ -464,6 +485,7 @@ ModularCheatManager/
 #include "Delegates/CraftingDelegates/CraftingDelegates.h"
 #include "Delegates/SimulatorFramework/SimulatorDelegates.h"
 #include "Delegates/ModularSaveGameSystem/SaveDelegates.h"
+#include "Delegates/AdvancedWidgetFramework/WW_WidgetDelegates.h"
 ```
 
 **3. SharedDefaults Data Structs:**
@@ -474,6 +496,10 @@ ModularCheatManager/
 #include "Lib/Data/ModularCraftingData/CraftingData.h"
 #include "Lib/Data/SimulatorFramework/MiniGameData.h"
 #include "Lib/Data/ModularSaveGameSystem/SaveData.h"
+#include "Lib/Data/AdvancedWidgetFramework/WidgetStateData.h"
+#include "Lib/Data/AdvancedWidgetFramework/WidgetPoolData.h"
+#include "Lib/Data/AdvancedWidgetFramework/WidgetSyncData.h"
+#include "Lib/Data/AdvancedWidgetFramework/DockableLayoutData.h"
 ```
 
 **4. SharedDefaults Enums & Tags:**
@@ -684,38 +710,39 @@ ModularCheatManager/
 - Delete AWF → graceful degradation to basic show/hide
 - No compile-time L2→L2 coupling
 
-**AWF Deferred Feature 1: Widget Pooling System (P3)**
+**AWF Deferred Feature 1: Widget Pooling System ✅ COMPLETE (Feb 6, 2026)**
 High-frequency widget spawn/destroy (damage numbers, floating markers, notifications, kill feed). Pre-instantiation, recycle pool, spatial sorting, priority eviction.
-- ⬜ UWidgetPoolManager subsystem
-- ⬜ Pool configuration via DataTable (pool size, recycle timeout, eviction priority)
-- ⬜ Spatial widget sorting (screen-space clustering for overlapping popups)
-- ⬜ Priority eviction (oldest/lowest-priority recycled first when pool full)
-- ⬜ Integration hooks for: combat UI, quest UI, economy notifications, MiniGame feedback
+- ✅ UWidgetPoolManager subsystem (L2 AWF, ULocalPlayerSubsystem + FTickableGameObject)
+- ✅ FWidgetPoolConfig/FWidgetPoolStats data structs (L0 SharedDefaults)
+- ✅ Spatial widget sorting (screen-space clustering for overlapping popups)
+- ✅ Priority eviction (oldest/lowest-priority recycled first when pool full)
+- ✅ Acquire/Release API with auto-release timeout
 
-**AWF Deferred Feature 2: Dockable/Composable Layout Engine (P4)**
+**AWF Deferred Feature 2: Dockable/Composable Layout Engine ✅ COMPLETE (Feb 6, 2026)**
 Widgets arranged into panels, split views, tabbed containers. Player-rearrangeable dock zones.
-- ⬜ UDockZone actor/component (placeable dock targets)
-- ⬜ UDockableWidget base class (widgets that can be docked/undocked)
-- ⬜ Split-view and tabbed container widgets
-- ⬜ Layout persistence (save/load dock arrangement)
-- ⬜ Conflict resolution (two widgets targeting same dock zone)
+- ✅ UDockZoneComponent (placeable dock target, auto-registers with DockLayoutManager)
+- ✅ IDockableWidgetInterface (L0 interface, mandatory getter, dock/undock callbacks)
+- ✅ UDockLayoutManager subsystem (split-view, tabbed containers, conflict resolution)
+- ✅ Layout persistence (FDockLayout snapshot save/load)
+- ✅ Conflict resolution (Reject/Replace/Tab/Split policies)
+- ✅ FDockZoneConfig, FDockableWidgetConfig, FDockSplitConfig data structs (L0)
 
-**AWF Deferred Feature 3: Widget State Machine Manager (P3)**
+**AWF Deferred Feature 3: Widget State Machine Manager ✅ COMPLETE (Feb 6, 2026)**
 Non-trivial widget transitions: `Closed → AnimatingIn → Visible → Paused → AnimatingOut → Closed`. Interrupt handling when multiple widgets conflict. Priority-based conflict resolution. Registers into WidgetManagerBase via delegates.
-- ⬜ FWidgetStateMachine struct (states, transitions, interrupts)
-- ⬜ UWidgetStateManager subsystem (runs state machines, resolves conflicts)
-- ⬜ UWidgetAnimation integration (transition animation per state change)
-- ⬜ Interrupt rules (configurable per widget: cancel, queue, or pause)
-- ⬜ Register state machine flow into WidgetManagerBase via delegate (OnShowRequested, OnHideRequested intercepted)
+- ✅ FWidgetStateConfig/FWidgetStateMachineEntry structs (L0 SharedDefaults)
+- ✅ UWidgetStateManager subsystem (L2 AWF, ULocalPlayerSubsystem + FTickableGameObject)
+- ✅ Transition timing (animate-in/out duration, auto-close timeout)
+- ✅ Interrupt rules (configurable per widget: Cancel, Queue, Pause)
+- ✅ Register state machine flow into WidgetManagerBase via FWidgetTransitionInterceptDelegate
 
-**AWF Deferred Feature 4: Multiplayer Widget Synchronization (P3)**
+**AWF Deferred Feature 4: Multiplayer Widget Synchronization ✅ COMPLETE (Feb 6, 2026)**
 Shared UI state that replicates — spectator mirroring, co-op crafting stations, auction houses. Generic widget replication infrastructure any plugin opts into. Registers into WidgetManagerBase via delegates.
-- ⬜ IReplicatedWidgetInterface (extends IManagedWidgetInterface)
-- ⬜ UWidgetSyncSubsystem (replicates widget state deltas, not full state)
-- ⬜ Server-authoritative widget ownership model
-- ⬜ Spectator binding system (observe another player's widget state)
-- ⬜ Bandwidth optimization (delta compression for widget properties)
-- ⬜ Register sync hooks into WidgetManagerBase via delegate (OnWidgetStateChanged intercepted for replication)
+- ✅ IReplicatedWidgetInterface (L0 interface, extends IManagedWidgetInterface pattern)
+- ✅ UWidgetSyncSubsystem (L2 AWF, delta capture + payload system)
+- ✅ UWidgetSyncComponent (replicated ActorComponent on PlayerController, Server/Client RPCs)
+- ✅ Spectator binding system (observe another player's widget state)
+- ✅ Delta compression (only changed properties sent, configurable capture interval)
+- ✅ Register sync hooks into WidgetManagerBase via FWidgetSyncInterceptDelegate
 
 **IValidWidgetInterface Removal (COMPLETE - Feb 2, 2026):**
 - ✅ Merged into IManagedWidgetInterface with `IsValidWidget()` BlueprintNativeEvent
@@ -1085,7 +1112,7 @@ OnCraftingComplete.Broadcast(RecipeID);  // Plugin A broadcasts
 
 ## 🔗 INTERFACE SYSTEM
 
-### Complete Interface List (8 Interfaces)
+### Complete Interface List (11 Interfaces)
 
 | Interface | File Location | Mandatory Getter | Functions | Purpose |
 |-----------|---------------|------------------|-----------|---------|
@@ -1097,6 +1124,9 @@ OnCraftingComplete.Broadcast(RecipeID);  // Plugin A broadcasts
 | ISaveableInterface | `Interfaces/ModularSaveGameSystem/SaveableInterface.h` | GetSaveableAsObject() | 7 | Save/load state |
 | ICameraControlInterface | `Interfaces/ModularPlayerController/CameraControlInterface.h` | GetCameraControllerAsActor() | 5 | Camera modes |
 | IPhysicalInteractionInterface | `Interfaces/SimulatorFramework/PhysicalInteractionInterface.h` | GetPhysicalInteractableAsActor() | 6 | Physics grab |
+| IManagedWidgetInterface | `Interfaces/AdvancedWidgetFramework/ManagedWidgetInterface.h` | GetManagedWidgetAsObject() | 6 | Widget lifecycle |
+| IReplicatedWidgetInterface | `Interfaces/AdvancedWidgetFramework/ReplicatedWidgetInterface.h` | GetReplicatedWidgetAsObject() | 5 | MP widget sync |
+| IDockableWidgetInterface | `Interfaces/AdvancedWidgetFramework/DockableWidgetInterface.h` | GetDockableAsObject() | 7 | Dockable layout |
 
 ### Interface Creation Rules
 
@@ -2334,6 +2364,19 @@ Plugins/[PluginName]/Source/[PluginName]/[Public|Private]/[Category]/FileName.h
 
 ## 📋 VERSION HISTORY
 
+**V2.13.5** (February 6, 2026)
+- ✅ Widget System Refactor: UWidgetManagerBase (MSB) + UInventoryWidgetManager (MIS)
+- ✅ AWF Deferred Feature 1: Widget State Machine Manager (UWidgetStateManager + FWidgetStateConfig)
+- ✅ AWF Deferred Feature 2: Widget Pooling System (UWidgetPoolManager + FWidgetPoolConfig)
+- ✅ AWF Deferred Feature 3: MP Widget Synchronization (UWidgetSyncSubsystem + UWidgetSyncComponent + IReplicatedWidgetInterface)
+- ✅ AWF Deferred Feature 4: Dockable Layout Engine (UDockLayoutManager + UDockZoneComponent + IDockableWidgetInterface)
+- ✅ Added Golden Rule #48: GameplayTag Centralization
+- ✅ Interface count: 8 → 11 (added IManagedWidgetInterface, IReplicatedWidgetInterface, IDockableWidgetInterface)
+- ✅ Data struct files: 6 → 10 (added WidgetStateData, WidgetPoolData, WidgetSyncData, DockableLayoutData)
+- ✅ New L0 delegates: WW_WidgetDelegates.h (state, pool, sync, dock delegates)
+- ✅ 14 new files created, 8 files updated
+- ✅ Full audit against 48 Golden Rules: 17 violations found and fixed
+
 **V2.13.4** (February 4, 2026)
 - ✅ Fixed QuickSlot tag definitions in WW_TagLibrary.cpp (.QuickSlot.0 through .QuickSlot.9)
 - ✅ Added Build Rule: NO builds/rebuilds unless user explicitly requests
@@ -2385,7 +2428,7 @@ Plugins/[PluginName]/Source/[PluginName]/[Public|Private]/[Category]/FileName.h
 
 **Documentation:** ✅ Complete with file paths + workflow protocols
 
-**Rules:** ✅ 48 Golden Rules (#1-47)
+**Rules:** ✅ 48 Golden Rules (#1-48)
 
 **Plugins:** ✅ 11 plugins mapped
 

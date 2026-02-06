@@ -45,7 +45,7 @@ UWidgetManagerBase stays MSB permanently. UInventoryWidgetManager in MIS extends
 - ✅ Widget System Refactor complete: UWidgetManagerBase (MSB) + UInventoryWidgetManager (MIS) (Feb 6, 2026)
 - ✅ IValidWidgetInterface merged into IManagedWidgetInterface (Feb 2, 2026)
 - ✅ Widget Location Cleanup complete: widgets in owning plugin's UI/ folder (Feb 2, 2026)
-**Deferred:** Pooling(P3), StateMachine(P3), MPSync(P3), Dockable(P4)
+- ✅ All 4 deferred features complete (Feb 6, 2026): StateMachine, Pooling, MPSync, Dockable
 
 ## Naming
 `U`=UObject `A`=Actor `F`=struct `I`=interface `E`=enum | `bPrefix` bools | PascalCase funcs | camelCase locals
@@ -56,9 +56,9 @@ Order: Own→SharedDefaults→MSB→Engine→`.generated.h` LAST
 ## Module Creation (SharedDefaults)
 | Type | Path | # |
 |------|------|---|
-| Interface | `Public/Interfaces/<Plugin>/<n>Interface.h` | 17 |
-| Delegate | `Public/Delegates/<Plugin>/<n>Delegates.h` | 8 |
-| Data | `Public/Lib/Data/<Plugin>/<n>Data.h` | 14 |
+| Interface | `Public/Interfaces/<Plugin>/<n>Interface.h` | 11 |
+| Delegate | `Public/Delegates/<Plugin>/<n>Delegates.h` | 6 |
+| Data | `Public/Lib/Data/<Plugin>/<n>Data.h` | 10 |
 
 Steps: Create→Registry→include path→directory tree (Rules #42-45)
 
