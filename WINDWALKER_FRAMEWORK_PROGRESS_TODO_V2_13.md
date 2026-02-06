@@ -1,6 +1,6 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** February 6, 2026 (AWF Deferred Features Complete session)
+**Last Updated:** February 6, 2026 (Tech Debt Cleanup + IManagedWidgetInterface Implementation)
 **Framework Version:** 2.13.5
 **Author:** Windwalker Productions
 
@@ -326,14 +326,15 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | Total Plugins (Future) | 6 planned |
 | Phases Complete | 12/13 |
 | Golden Rules | 48 (in Architecture V2.13.4) |
-| Interfaces | 8 |
+| Interfaces | 8 (IManagedWidgetInterface now fully implemented with 3 methods) |
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
 | P2 High | 0 (all complete) |
-| P3 Medium | 39 (spawn, time, save, economy, tag audit complete) |
+| P3 Medium | 40 (3 editor/deferred + 6 economy + 12 spawn + 10 save + 9 time) |
 | P4 Low | 11 (quest, marketplace) |
-| Total Remaining Tasks | 58 |
+| Total Remaining Tasks | 59 |
 | Total Helpers | 4 |
+| Known Tech Debt | 0 (all 4 items resolved) |
 | Total Handlers | 6 |
 | Documentation Pages | ~80 (Architecture V2.13) |
 | Repository Files Mapped | 200+ |
@@ -428,12 +429,13 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 ## P3 — MEDIUM
 
-### Editor Tasks (Deferred)
+### Editor Tasks (Deferred — requires Unreal Editor, not code)
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Create DT_MiniGames DataTable | ⬜ | Example rows for all handler types |
-| Create test level for MiniGames | ⬜ | Vault, lock, cooking stations |
+| Create DT_MiniGames DataTable | ⏸️ | Editor asset task: FMiniGameData struct ready, MiniGameComponent has UDataTable* property |
+| Create test level for MiniGames | ⏸️ | Vault, lock, cooking stations |
+| Build verification (compile both repos) | ⏸️ | Deferred per user — all code changes code-only validated |
 
 ### ModularEconomyPlugin (Future)
 
@@ -526,7 +528,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 **Total:** 5 tasks (5 complete, 0 remaining)
 
-**Total P3 Tasks:** 39 (2 editor + 6 economy + 12 spawn system + 10 save implementation + 9 time system)
+**Total P3 Tasks:** 40 (3 editor/deferred + 6 economy + 12 spawn system + 10 save implementation + 9 time system)
 
 ---
 
@@ -571,7 +573,8 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | MiniGame UI | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
 | Multiplayer Testing | 0 | 8 | 0 | 0 | 0 | 8 (deferred) |
 | Widgets/UI | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
-| Editor Tasks | 0 | 0 | 0 | 2 | 0 | 2 (deferred) |
+| Editor Tasks | 0 | 0 | 0 | 3 | 0 | 3 (deferred — requires Unreal Editor) |
+| Tech Debt Cleanup | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE (formulas, tags, interface) |
 | ModularSpawnSystem Completion | 0 | 0 | 0 | 12 | 0 | 12 |
 | WeatherTimeManager Basic System | 0 | 0 | 0 | 9 | 0 | 9 |
 | Economy | 0 | 0 | 0 | 6 | 0 | 6 |
@@ -580,7 +583,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | Quest | 0 | 0 | 0 | 0 | 4 | 4 |
 | Marketplace | 0 | 0 | 0 | 0 | 5 | 5 |
 | Code Quality | 0 | 0 | 0 | 0 | 2 | 2 |
-| **TOTAL** | **0** | **8** | **0** | **39** | **11** | **58** |
+| **TOTAL** | **0** | **8** | **0** | **40** | **11** | **59** |
 
 ---
 
@@ -738,9 +741,10 @@ All 4 AWF deferred features implemented. Full L0→L0.5→L2 architecture with d
 
 | Item | Location | Why It Matters | Priority |
 |------|----------|----------------|----------|
-| Inline formulas in structs | FStationInstanceData, FToolInstanceData | Should call UProgressionHelpers | P3 |
-| RequestGameplayTag in type helpers | FItemData::IsRangedWeapon() etc. | Should use cached tags from WW_TagLibrary | P3 |
+| ~~Inline formulas in structs~~ | ~~FStationInstanceData, FToolInstanceData~~ | ~~RESOLVED — FToolInstanceData overloads added to UProgressionHelpers, commented code removed~~ | ~~✅~~ |
+| ~~RequestGameplayTag in type helpers~~ | ~~FItemData::IsRangedWeapon() etc.~~ | ~~RESOLVED — 10 Item.* tags added to WW_TagLibrary, all calls replaced~~ | ~~✅~~ |
 | ~~WidgetManager architectural violation~~ | ~~AdvancedWidgetFramework~~ | ~~RESOLVED V2.13.5 — Split into UWidgetManagerBase (MSB) + UInventoryWidgetManager (MIS)~~ | ~~✅~~ |
+| ~~IManagedWidgetInterface empty shell~~ | ~~SharedDefaults/Interfaces/AWF~~ | ~~RESOLVED — Proper UINTERFACE with 3 methods, ValidWidgetInterface.h deleted~~ | ~~✅~~ |
 
 ---
 

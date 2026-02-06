@@ -787,11 +787,14 @@ All GameplayTags in the Windwalker Framework are centralized in two locations:
 |--------|------------|---------|
 | SharedDefaults | `Movement.*`, `Character.*` | `Movement.Stance.Standing` |
 | ModularPlayerController | `Camera.*` | `Camera.Mode.TPS` |
-| ModularInventorySystem | `Inventory.*` | `Inventory.Slot.MainHand` |
+| Pickupables (global) | `Item.*` | `Item.Type.Weapon.Ranged`, `Item.Rarity.Epic` |
+| ModularInventorySystem | `Inventory.*` | `Inventory.Slot.MainHand`, `Inventory.Item.Type.Weapon` |
 | SimulatorFramework | `Simulator.*` | `Simulator.Device.State.Off` |
 | AdvancedWidgetFramework | `UI.*` | `UI.Widget.Category.HUD` |
 | ModularCheatManager | `Cheat.*` | `Cheat.Permission.Admin` |
 | Input (global) | `Input.*` | `Input.Numpad.0` |
+
+> **Note:** `Item.*` tags describe **pickupable world item properties** (weapon type, rarity). `Inventory.Item.*` tags describe **inventory system item categories** (storage classification). These are intentionally separate hierarchies serving different systems.
 
 ### 5-Step Protocol for Adding New Tags
 
@@ -1124,7 +1127,7 @@ OnCraftingComplete.Broadcast(RecipeID);  // Plugin A broadcasts
 | ISaveableInterface | `Interfaces/ModularSaveGameSystem/SaveableInterface.h` | GetSaveableAsObject() | 7 | Save/load state |
 | ICameraControlInterface | `Interfaces/ModularPlayerController/CameraControlInterface.h` | GetCameraControllerAsActor() | 5 | Camera modes |
 | IPhysicalInteractionInterface | `Interfaces/SimulatorFramework/PhysicalInteractionInterface.h` | GetPhysicalInteractableAsActor() | 6 | Physics grab |
-| IManagedWidgetInterface | `Interfaces/AdvancedWidgetFramework/ManagedWidgetInterface.h` | GetManagedWidgetAsObject() | 6 | Widget lifecycle |
+| IManagedWidgetInterface | `Interfaces/AdvancedWidgetFramework/ManagedWidgetInterface.h` | GetManagedWidgetAsObject() | 3 | Widget lifecycle (GetManagedWidgetAsObject, GetWidgetCategoryTag, IsValidWidget) |
 | IReplicatedWidgetInterface | `Interfaces/AdvancedWidgetFramework/ReplicatedWidgetInterface.h` | GetReplicatedWidgetAsObject() | 5 | MP widget sync |
 | IDockableWidgetInterface | `Interfaces/AdvancedWidgetFramework/DockableWidgetInterface.h` | GetDockableAsObject() | 7 | Dockable layout |
 
