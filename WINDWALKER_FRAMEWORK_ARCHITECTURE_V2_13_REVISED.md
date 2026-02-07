@@ -96,7 +96,6 @@ Windwalker_Productions_SharedDefaults/
 │   │   ├── ModularInventorySystem/
 │   │   │   ├── CraftingInterface.h
 │   │   │   ├── InventoryInterface.h
-│   │   │   ├── ItemSpawnerInterface.h
 │   │   │   └── SlottableInteface.h
 │   │   ├── ModularPlayerController/
 │   │   │   ├── CameraControlInterface.h
@@ -105,8 +104,6 @@ Windwalker_Productions_SharedDefaults/
 │   │   │   └── GameplayEventHandlerInteface.h
 │   │   ├── ModularSaveGameSystem/
 │   │   │   └── SaveableInterface.h
-│   │   ├── ModularSpawnSystem/
-│   │   │   └── SaveableInteface.h
 │   │   └── SimulatorFramework/
 │   │       ├── DegradableInterface.h
 │   │       ├── DeviceInterface.h
@@ -437,10 +434,23 @@ ModularSpawnSystem/
 ├── Source/ModularSpawnSystem/Public/
 │   ├── Subsystems/
 │   │   └── UniversalSpawnManager.h
+│   ├── Components/
+│   │   └── WaveSpawnerComponent.h
+│   ├── Actors/
+│   │   └── SpawnPointActor.h
 │   └── ModularSpawnSystem.h
+├── Source/ModularSpawnSystem/Private/
+│   ├── Subsystems/
+│   │   └── UniversalSpawnManager.cpp
+│   ├── Components/
+│   │   └── WaveSpawnerComponent.cpp
+│   └── Actors/
+│       └── SpawnPointActor.cpp
 └── Intermediate/Build/Win64/UnrealEditor/Inc/ModularSpawnSystem/UHT/
     ├── ModularSpawnSystemClasses.h
-    └── UniversalSpawnManager.generated.h
+    ├── UniversalSpawnManager.generated.h
+    ├── WaveSpawnerComponent.generated.h
+    └── SpawnPointActor.generated.h
 ```
 
 ### ModularCheatManager (L2)
