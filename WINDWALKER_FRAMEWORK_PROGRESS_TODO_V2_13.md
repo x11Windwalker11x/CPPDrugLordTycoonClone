@@ -1,6 +1,6 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** February 7, 2026 (ModularSpawnSystem Completion 30%→100%)
+**Last Updated:** February 9, 2026 (ModularSpawnSystem Timer Handle Critique — 8 fixes)
 **Framework Version:** 2.13.5
 **Author:** Windwalker Productions
 
@@ -775,6 +775,29 @@ All 4 AWF deferred features implemented. Full L0→L0.5→L2 architecture with d
 
 ---
 
+### Session: ModularSpawnSystem Timer Handle Critique ✅ COMPLETE (February 9, 2026 - Session 7)
+
+Senior-level code review of all 4 FTimerHandle instances across 3 classes. Found 2 crash bugs, 1 logic bug, and several perf/quality issues.
+
+| Task | Status | Deliverable |
+|------|--------|-------------|
+| S1: WaveSpawner EndPlay | ✅ | Added EndPlay override calling StopWaves() — prevents dangling timer crash |
+| S2: SpawnPoint EndPlay | ✅ | Added EndPlay override clearing RespawnTimerHandle — prevents dangling timer crash |
+| S3: Respawn handle overwrite fix | ✅ | IsTimerActive guard + PendingRespawnCount tracking — prevents silently dropping respawns |
+| P1: OnCleanupTimer batch removal | ✅ | Replaced 3 reverse RemoveAt(i) O(n²) loops with RemoveAll O(n) batch compaction |
+| P4: Cache subsystem ref (Rule #41) | ✅ | TWeakObjectPtr<UUniversalSpawnManager> cached in BeginPlay, lazy re-cache fallback |
+| Q1: Log categories | ✅ | DEFINE_LOG_CATEGORY_STATIC per .cpp (LogSpawnManager, LogWaveSpawner, LogSpawnPoint), all LogTemp replaced |
+| Q3: STAT cycle counters | ✅ | DECLARE_STATS_GROUP + DECLARE_CYCLE_STAT + SCOPE_CYCLE_COUNTER for 3 timer callbacks |
+| Q4: ClampMin interval | ✅ | meta = (ClampMin = "1.0", ClampMax = "60.0") on CleanupInterval |
+
+**Tasks Completed:** 8
+**Files Modified:** 6 (3 headers + 3 implementations in ModularSpawnSystem)
+**Bugs Fixed:** 3 (2 crash bugs, 1 logic bug)
+**Performance Improvements:** 2 (batch removal, cached subsystem)
+**Quality Improvements:** 3 (log categories, STAT counters, clamp)
+
+---
+
 ## ⚠️ KNOWN TECH DEBT
 
 | Item | Location | Why It Matters | Priority |
@@ -888,6 +911,6 @@ All 4 AWF deferred features implemented. Full L0→L0.5→L2 architecture with d
 ---
 
 *Document Version: 2.13.5*
-*Last Updated: February 7, 2026*
+*Last Updated: February 9, 2026*
 *Framework Version: 2.13.5*
 *Author: Windwalker Productions*
