@@ -14,7 +14,7 @@
 |-------|--------|---------|
 | L0 | SharedDefaults | Interfaces, delegates, structs, tags |
 | L0.5 | MSB | Shared components, subsystems, helpers |
-| L2 | MPC, MIS, MIIS, Crafting, Simulator, AWF, Save, Spawn, Cheat | 11 feature plugins |
+| L2 | MPC, MIS, MIIS, Crafting, Simulator, AWF, Save, Spawn, Cheat, Economy | 12 feature plugins |
 
 **Rule:** L2→L2 forbidden. Communicate via L0 delegates. Delete any L2→others compile.
 
