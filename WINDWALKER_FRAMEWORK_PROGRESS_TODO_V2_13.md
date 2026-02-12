@@ -1,7 +1,7 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** February 12, 2026 (ModularQuestSystem Implementation — 13th plugin)
-**Framework Version:** 2.13.5
+**Last Updated:** February 12, 2026 (AWF Widget Location Refactor — L2→L2 violations eliminated)
+**Framework Version:** 2.13.6
 **Author:** Windwalker Productions
 
 ---
@@ -598,6 +598,37 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 ---
 
 ## ✅ COMPLETED WORK
+
+### AWF Widget Location Refactor ✅ COMPLETE (February 12, 2026)
+
+**V2.13.6 — Rule #47 Enforcement + L2→L2 Dependency Elimination**
+
+| Task | Status | Details |
+|------|--------|---------|
+| Move ManagedWidget_Master to MSB (L0.5) | ✅ | API macro → MODULARSYSTEMSBASE_API; UMG/Slate/SlateCore added to MSB Build.cs |
+| Move Widget_InteractionPrompt to MIIS/UI/ | ✅ | API macro → MODULARINTERACTIONSYSTEM_API |
+| Move Widget_PreInteraction to MIIS/UI/ | ✅ | API macro → MODULARINTERACTIONSYSTEM_API |
+| Move BoxSelectionWidget to MIS/UI/ | ✅ | API macro → MODULARINVENTORYSYSTEM_API |
+| Move ItemPreviewWidget_Base to MIS/UI/ | ✅ | API macro → MODULARINVENTORYSYSTEM_API |
+| Move AWF_DragDropOperation to MIS/Operations/ | ✅ | API macro → MODULARINVENTORYSYSTEM_API |
+| Remove AWF dep from MIIS Build.cs + .uplugin | ✅ | Zero AWF refs remain in MIIS |
+| Remove AWF dep from SimulatorFramework Build.cs + .uplugin | ✅ | Zero AWF refs remain |
+| Remove AWF dep from MPC Build.cs + .uplugin (2 entries) | ✅ | Hardcoded include path also removed |
+| Remove AWF dep from SaveGame Build.cs + .uplugin | ✅ | Zero AWF refs remain |
+| Update soft paths in InteractionDefaultsConstants.h | ✅ | /AdvancedWidgetFramework/ → /ModularInteractionSystem/ |
+| Delete AWF .uasset content files | ✅ | Blueprints to be recreated in MIIS Content/ via editor |
+| Remove duplicate include in InventoryResizableWindowWidget.cpp | ✅ | Line 9 duplicate removed |
+| Delete empty AWF folders (MasterWidgets, Interaction, UI, Operations) | ✅ | 8 folders cleaned |
+| Update Architecture doc | ✅ | MSB tree, AWF tree, Rule #47 text |
+| Update PROGRESS_TODO | ✅ | Completed work entry + version bump |
+
+**Source files moved:** 9 (8 .h/.cpp pairs + 1 header-only)
+**Build.cs edits:** 6 files (1 add UMG, 5 remove AWF)
+**.uplugin edits:** 4 files
+**L2→L2 violations eliminated:** 5 (MIIS→AWF, SimFW→AWF, MPC→AWF, SaveGame→AWF, MIS→AWF transitive)
+**AWF after refactor:** Purely optional (state machine, pooling, MP sync, docking only)
+
+---
 
 ### Phase 6.0: MiniGame System ✅ COMPLETE (January 25, 2026)
 

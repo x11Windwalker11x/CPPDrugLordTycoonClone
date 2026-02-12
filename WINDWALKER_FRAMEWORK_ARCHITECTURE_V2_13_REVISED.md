@@ -3,7 +3,7 @@
 **Comprehensive Framework Documentation**  
 **Date:** February 2, 2026  
 **Status:** Production Ready  
-**Revision:** V2.13.5 - ModularQuestSystem Complete (Quest lifecycle, chains, objective tracking)
+**Revision:** V2.13.6 - AWF Widget Location Refactor (ManagedWidget_Master→MSB, widgets→owning plugins, 5 L2→L2 violations eliminated)
 
 ---
 
@@ -48,7 +48,7 @@
 | ModularInventorySystem | L2 | Items, containers, slots |
 | CraftingPlugin | L2 | Recipes, stations, queue |
 | SimulatorFramework | L2 | Devices, mini-games, applications |
-| AdvancedWidgetFramework | L2 | Widget management, drag-drop |
+| AdvancedWidgetFramework | L2 | Widget state machine, pooling, MP sync, docking (optional) |
 | ModularSaveGameSystem | L2 | Save/load state |
 | ModularSpawnSystem | L2 | Entity spawning |
 | ModularCheatManager | L2 | Debug/cheat commands |
@@ -172,6 +172,8 @@ ModularSystemsBase/
 │   │   ├── CrafterComponent_Master.h
 │   │   ├── DataTableOverwritableComponent.h
 │   │   └── DurabilityComponent.h
+│   ├── MasterWidgets/
+│   │   └── ManagedWidget_Master.h
 │   ├── Operations/
 │   │   └── WidgetDragDropOperation.h
 │   ├── Subsystems/
@@ -393,8 +395,6 @@ AdvancedWidgetFramework/
 │   ├── Public/
 │   │   ├── Components/
 │   │   │   └── DockZoneComponent.h
-│   │   ├── MasterWidgets/
-│   │   │   └── ManagedWidget_Master.h
 │   │   ├── Subsystems/
 │   │   │   ├── DockLayoutManager.h
 │   │   │   ├── WidgetPoolManager.h
@@ -409,7 +409,10 @@ AdvancedWidgetFramework/
 │           ├── WidgetPoolManager.cpp
 │           ├── WidgetStateManager.cpp
 │           └── WidgetSyncSubsystem.cpp
+├── Content/ (empty - blueprints moved to owning plugins)
 ```
+
+**Note:** ManagedWidget_Master moved to MSB (L0.5) in V2.13.6. Interaction widgets moved to MIIS. ItemPreviewWidget_Base, BoxSelectionWidget, and AWF_DragDropOperation moved to MIS. AWF is now purely optional (state machine, pooling, MP sync, docking features only).
 
 ### ModularSaveGameSystem (L2)
 
@@ -751,7 +754,7 @@ ModularQuestSystem/
 
 **46. HUD widgets MUST use UManagedWidget_Master** — All managed HUD widgets inherit from UManagedWidget_Master. No exceptions.
 
-**47. Widgets belong in owning plugin's UI/ folder** — Each plugin owns its widgets. Interaction widgets → MIS/UI/, inventory widgets → MIIS/UI/, simulator widgets → SimulatorFramework/UI/. NOT in MSB or AWF. AWF only contains UManagedWidget_Master base class.
+**47. Widgets belong in owning plugin's UI/ folder** — Each plugin owns its widgets. Interaction widgets → MIIS/UI/, inventory widgets → MIS/UI/, simulator widgets → SimulatorFramework/UI/. NOT in AWF. UManagedWidget_Master base class lives in MSB (L0.5). AWF is purely optional (state machine, pooling, MP sync, docking).
 
 ---
 

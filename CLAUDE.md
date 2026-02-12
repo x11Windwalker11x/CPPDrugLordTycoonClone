@@ -2,7 +2,7 @@
 > **P1:** Max effectiveness, no info loss. **P2:** Min tokens. See full docs for details.
 
 ## Project
-**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.5
+**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.6
 
 ## Build
 ```bash
@@ -40,12 +40,13 @@ if (Actor->ImplementsInterface(UInterface::StaticClass()))
 | 47 | Widgets belong in owning plugin's UI/ folder (not MSB/AWF) |
 | 48 | Tags in BOTH ini+WW_TagLibrary; never RequestGameplayTag() |
 
-## AWF (Option B - Complete V2.13.5)
-UWidgetManagerBase stays MSB permanently. UInventoryWidgetManager in MIS extends base.
+## AWF (Option B - Complete V2.13.6)
+UWidgetManagerBase stays MSB permanently. UInventoryWidgetManager in MIS extends base. UManagedWidget_Master now in MSB (L0.5).
+- ✅ Widget Location Refactor (Feb 12, 2026): ManagedWidget_Master→MSB, interaction widgets→MIIS, inventory widgets→MIS, 5 L2→L2 violations eliminated
 - ✅ Widget System Refactor complete: UWidgetManagerBase (MSB) + UInventoryWidgetManager (MIS) (Feb 6, 2026)
 - ✅ IValidWidgetInterface merged into IManagedWidgetInterface (Feb 2, 2026)
-- ✅ Widget Location Cleanup complete: widgets in owning plugin's UI/ folder (Feb 2, 2026)
 - ✅ All 4 deferred features complete (Feb 6, 2026): StateMachine, Pooling, MPSync, Dockable
+- AWF is now purely optional: state machine, pooling, MP sync, docking only. No other plugin depends on AWF.
 
 ## Naming
 `U`=UObject `A`=Actor `F`=struct `I`=interface `E`=enum | `bPrefix` bools | PascalCase funcs | camelCase locals
