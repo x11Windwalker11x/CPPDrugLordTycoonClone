@@ -71,6 +71,10 @@
 		{
 			"Name": "ModularEconomyPlugin",
 			"Enabled": true
+		},
+		{
+			"Name": "ModularQuestSystem",
+			"Enabled": true
 		}
 	]
 }

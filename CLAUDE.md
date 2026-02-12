@@ -14,7 +14,7 @@
 |-------|--------|---------|
 | L0 | SharedDefaults | Interfaces, delegates, structs, tags |
 | L0.5 | MSB | Shared components, subsystems, helpers |
-| L2 | MPC, MIS, MIIS, Crafting, Simulator, AWF, Save, Spawn, Cheat, Economy | 12 feature plugins |
+| L2 | MPC, MIS, MIIS, Crafting, Simulator, AWF, Save, Spawn, Cheat, Economy, Quest | 13 feature plugins |
 
 **Rule:** L2→L2 forbidden. Communicate via L0 delegates. Delete any L2→others compile.
 
@@ -56,9 +56,9 @@ Order: Own→SharedDefaults→MSB→Engine→`.generated.h` LAST
 ## Module Creation (SharedDefaults)
 | Type | Path | # |
 |------|------|---|
-| Interface | `Public/Interfaces/<Plugin>/<n>Interface.h` | 11 |
-| Delegate | `Public/Delegates/<Plugin>/<n>Delegates.h` | 6 |
-| Data | `Public/Lib/Data/<Plugin>/<n>Data.h` | 10 |
+| Interface | `Public/Interfaces/<Plugin>/<n>Interface.h` | 12 |
+| Delegate | `Public/Delegates/<Plugin>/<n>Delegates.h` | 7 |
+| Data | `Public/Lib/Data/<Plugin>/<n>Data.h` | 11 |
 
 Steps: Create→Registry→include path→directory tree (Rules #42-45)
 
