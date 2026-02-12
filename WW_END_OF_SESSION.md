@@ -1,89 +1,78 @@
-# END OF SESSION BRIEFING GENERATOR
+# END OF SESSION — FULL PROTOCOL
 
-**Purpose:** Auto-generate next-session briefing file
-
----
-
-## INSTRUCTIONS
-
-**Paste this into claude.ai at end of session:**
+**Purpose:** Complete session-end documentation and version control.
 
 ---
 
-Generate next-session briefing file.
+## MANDATORY CHECKLIST (NEVER SKIP)
 
-**Include:**
+### Step 0: Update This File (if protocol changes)
+- Only if new steps are added or existing steps are modified.
 
-1. **CURRENT TASK STATUS**
-   - What task was worked on
-   - What's complete
-   - What remains (specific next action)
+### Step 1: Update `WINDWALKER_FRAMEWORK_PROGRESS_TODO_V2_13.md`
+- Add completed work entry with metrics (files created, modified, lines changed)
+- Update Metrics table if counts changed (interfaces, delegates, structs, tags, plugins)
+- Mark any priority tasks as complete
 
-2. **FILES MODIFIED/CREATED**
-   - List all files touched this session
-   - Brief note on what changed
+### Step 2: Update `WW_SESSION_STARTER.md`
+- Update the **Last Session** line with: date, session number, task name, key metrics
 
-3. **ARCHITECTURAL DECISIONS MADE**
-   - Any ADD approvals
-   - Pattern extractions
-   - Golden Rule additions/changes
+### Step 3: Create `WW_SESSION_BRIEFING_[DATE].md`
+- Use `_B`, `_C` suffix if multiple briefings on same date
+- Include: task status, files modified/created, architectural decisions, blockers, next session action
 
-4. **BLOCKERS/DEPENDENCIES**
-   - What's blocking progress (if any)
-   - What needs to happen before resuming
+### Step 4: Update `WINDWALKER_FRAMEWORK_ARCHITECTURE_V2_13_REVISED.md`
+- **IF** new structs/interfaces/plugins/rules were added:
+  - Update directory trees
+  - Update L0 registries (data includes, delegate includes)
+  - Update tag category prefixes
+  - Update version history
+  - Update metrics/counts
 
-5. **NEXT SESSION FIRST ACTION**
-   - Exact step to take when resuming
-   - Context needed (which files to check, what to upload)
+### Step 5: Update `CLAUDE.md`
+- **IF** plugin count, version, or rules changed:
+  - Update Module Creation counts
+  - Update version number
+  - Update AWF/architecture status
 
-6. **COMPACT COMMAND FOR CLAUDE CODE**
-   - If Claude Code was used, include: `/compact preserve [key decisions]`
-
-**Format as:** `WW_SESSION_BRIEFING_[DATE].md`
-
-**Save to:** `D:\Unreal Projects (2nd Place)\CPPDrugLordClone\WW_SESSION_BRIEFING_[DATE].md`
+### Step 6: Git Commit + Push
+- Commit to BOTH repos:
+  - `Plugins/` → WWSimulatorFramework (framework repo)
+  - Root → CPPDrugLordTycoonClone (game repo)
+- Verify `git remote -v` before pushing
+- Never push plugin code to game repo or vice versa
 
 ---
 
-## EXAMPLE OUTPUT
+## BRIEFING TEMPLATE
 
 ```markdown
-# SESSION BRIEFING - Feb 2, 2026
+# SESSION BRIEFING - [DATE]
 
-## TASK: IValidWidgetInterface Removal (P2-A)
+## TASK: [Task Name]
 
 STATUS:
-- ✅ Deleted IValidWidgetInterface.h
-- ✅ Merged IsValidWidget() into IManagedWidgetInterface
-- ✅ Updated WidgetManagerBase registry checks
-- ⏸️ REMAINING: Update all implementors (UManagedWidget_Master, BoxSelectionWidget, etc)
+- [List of completed items]
+- [Remaining items if any]
+
+FILES CREATED:
+- [path] (description)
 
 FILES MODIFIED:
-- SharedDefaults/Interfaces/IManagedWidgetInterface.h (added IsValidWidget())
-- MSB/WidgetManagerBase.cpp (updated registry logic)
-
-FILES DELETED:
-- SharedDefaults/Interfaces/IValidWidgetInterface.h
+- [path] (what changed)
 
 ARCHITECTURAL DECISIONS:
-- None this session (following existing P2-A plan)
+- [decisions made or "None"]
 
 BLOCKERS:
-- None
+- [blockers or "None"]
 
 NEXT SESSION FIRST ACTION:
-1. Open UManagedWidget_Master.h in Rider
-2. Remove `IValidWidgetInterface` from inheritance list
-3. Repeat for BoxSelectionWidget, Widget_PreInteraction, Widget_InteractionPrompt
-4. Compile and verify no errors
+1. [exact step]
 
 CLAUDE CODE COMPACT:
-`/compact preserve IValidWidgetInterface removal, IManagedWidgetInterface merge, registry pattern`
+`/compact preserve [key decisions]`
 ```
-
----
-
-**Upload this file at next session start along with framework files.**
 
 ---
 

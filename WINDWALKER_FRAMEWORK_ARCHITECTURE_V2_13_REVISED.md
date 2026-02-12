@@ -173,7 +173,8 @@ ModularSystemsBase/
 │   │   ├── DataTableOverwritableComponent.h
 │   │   └── DurabilityComponent.h
 │   ├── MasterWidgets/
-│   │   └── ManagedWidget_Master.h
+│   │   ├── ManagedWidget_Master.h
+│   │   └── MarqueeSelectionWidget_Base.h
 │   ├── Operations/
 │   │   └── WidgetDragDropOperation.h
 │   ├── Subsystems/
@@ -563,6 +564,7 @@ ModularQuestSystem/
 #include "Lib/Data/AdvancedWidgetFramework/WidgetSyncData.h"
 #include "Lib/Data/AdvancedWidgetFramework/DockableLayoutData.h"
 #include "Lib/Data/ModularQuestSystem/QuestData.h"
+#include "Lib/Data/ModularSystemsBase/MarqueeSelectionData.h"
 ```
 
 **4. SharedDefaults Enums & Tags:**
@@ -853,7 +855,7 @@ All GameplayTags in the Windwalker Framework are centralized in two locations:
 | Pickupables (global) | `Item.*` | `Item.Type.Weapon.Ranged`, `Item.Rarity.Epic` |
 | ModularInventorySystem | `Inventory.*` | `Inventory.Slot.MainHand`, `Inventory.Item.Type.Weapon` |
 | SimulatorFramework | `Simulator.*` | `Simulator.Device.State.Off` |
-| AdvancedWidgetFramework | `UI.*` | `UI.Widget.Category.HUD` |
+| AdvancedWidgetFramework | `UI.*` | `UI.Widget.Category.HUD`, `UI.Selection.Mode.Replace` |
 | ModularCheatManager | `Cheat.*` | `Cheat.Permission.Admin` |
 | ModularEconomyPlugin | `Economy.*` | `Economy.Currency.Cash` |
 | ModularQuestSystem | `Quest.*` | `Quest.State.Active`, `Quest.Event.Completed` |
@@ -2434,6 +2436,16 @@ Plugins/[PluginName]/Source/[PluginName]/[Public|Private]/[Category]/FileName.h
 ---
 
 ## 📋 VERSION HISTORY
+
+**V2.13.6** (February 12, 2026)
+- ✅ AWF Widget Location Refactor: ManagedWidget_Master→MSB, interaction widgets→MIIS, inventory widgets→MIS, 5 L2→L2 violations eliminated
+- ✅ MarqueeSelectionWidget_Base System (V1 UI-Space): Abstract base in MSB, strategy pattern via GatherSelectableCandidates()
+- ✅ BoxSelectionWidget re-parented from UUserWidget to UMarqueeSelectionWidget_Base
+- ✅ ~150 lines of monolithic selection logic extracted from InventoryGridWidget
+- ✅ 4 UI.Selection.Mode tags (Replace, Additive, Toggle, Subtractive) — FGameplayTag, no enums
+- ✅ 3 L0 data structs: FMarqueeConfig, FMarqueeCandidate, FMarqueeSelectionResult
+- ✅ 2 L0 delegates: FOnMarqueeSelectionComplete, FOnMarqueeCancelled
+- ✅ 6 InventoryWidgetManager stubs completed (AddToSelection, RemoveFromSelection, ToggleSelection, AddMultipleToSelection, CanMultiSelect, CanShowContextMenu)
 
 **V2.13.5** (February 6, 2026)
 - ✅ Widget System Refactor: UWidgetManagerBase (MSB) + UInventoryWidgetManager (MIS)

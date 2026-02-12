@@ -58,8 +58,8 @@ Order: Own→SharedDefaults→MSB→Engine→`.generated.h` LAST
 | Type | Path | # |
 |------|------|---|
 | Interface | `Public/Interfaces/<Plugin>/<n>Interface.h` | 12 |
-| Delegate | `Public/Delegates/<Plugin>/<n>Delegates.h` | 7 |
-| Data | `Public/Lib/Data/<Plugin>/<n>Data.h` | 11 |
+| Delegate | `Public/Delegates/<Plugin>/<n>Delegates.h` | 8 |
+| Data | `Public/Lib/Data/<Plugin>/<n>Data.h` | 12 |
 
 Steps: Create→Registry→include path→directory tree (Rules #42-45)
 

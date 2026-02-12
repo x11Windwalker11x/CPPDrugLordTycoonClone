@@ -336,7 +336,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | Total Plugins (Future) | 3 planned |
 | Phases Complete | 13/14 |
 | Golden Rules | 48 (in Architecture V2.13.5) |
-| Interfaces | 12 (IQuestGiverInterface added for quest giver NPCs) |
+| Interfaces | 12 |
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
 | P2 High | 0 (all complete) |
@@ -598,6 +598,32 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 ---
 
 ## ✅ COMPLETED WORK
+
+### MarqueeSelectionWidget_Base System ✅ COMPLETE (February 12, 2026)
+
+**V2.13.6 — AAA Marquee Selection (V1 UI-Space Only)**
+
+| Task | Status | Details |
+|------|--------|---------|
+| Create FMarqueeConfig, FMarqueeCandidate, FMarqueeSelectionResult structs | ✅ | SharedDefaults/Lib/Data/ModularSystemsBase/MarqueeSelectionData.h |
+| Create FOnMarqueeSelectionComplete, FOnMarqueeCancelled delegates | ✅ | SharedDefaults/Delegates/ModularSystemsBase/MarqueeSelectionDelegates.h |
+| Add 4 UI.Selection.Mode tags (Replace, Additive, Toggle, Subtractive) | ✅ | WW_TagLibrary.h/.cpp + DefaultGameplayTags.ini |
+| Create UMarqueeSelectionWidget_Base (Abstract, MSB) | ✅ | MSB/MasterWidgets/MarqueeSelectionWidget_Base.h/.cpp |
+| Re-parent BoxSelectionWidget → UMarqueeSelectionWidget_Base | ✅ | MIS/UI/BoxSelectionWidget.h/.cpp |
+| Extract ~150 lines of selection logic from InventoryGridWidget | ✅ | MIS/UI/InventoryGridWidget.h/.cpp refactored |
+| Implement InventoryWidgetManager stubs | ✅ | 6 methods: AddToSelection, RemoveFromSelection, ToggleSelection, AddMultipleToSelection, CanMultiSelect, CanShowContextMenu |
+| Strategy pattern via pure virtual GatherSelectableCandidates() | ✅ | Consumers override to provide candidates |
+| Modifier key support (Shift/Ctrl/Shift+Ctrl) → FGameplayTag modes | ✅ | No enums — all state as FGameplayTag |
+| Candidate preview enter/exit diffing | ✅ | TSet<TWeakObjectPtr<UObject>> tracking |
+
+**New files:** 5 (2 L0 data/delegates, 2 MSB base widget .h/.cpp)
+**Modified files:** 9 (WW_TagLibrary.h/.cpp, DefaultGameplayTags.ini, BoxSelectionWidget.h/.cpp, InventoryGridWidget.h/.cpp, InventoryWidgetManager.h/.cpp)
+**Lines removed from InventoryGridWidget:** ~150 (monolithic selection logic)
+**Tags added:** 4 (UI.Selection.Mode.*)
+**Design:** Strategy pattern, FGameplayTag for ALL state/mode, TWeakObjectPtr<UObject> (no UMG dep at L0)
+**Deferred to V2:** World-space RTS/4x, animated borders, select-all, sound hooks
+
+---
 
 ### AWF Widget Location Refactor ✅ COMPLETE (February 12, 2026)
 
