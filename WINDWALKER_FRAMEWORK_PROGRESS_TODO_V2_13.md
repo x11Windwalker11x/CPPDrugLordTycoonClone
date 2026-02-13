@@ -1,7 +1,7 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** February 12, 2026 (AWF Widget Location Refactor — L2→L2 violations eliminated)
-**Framework Version:** 2.13.6
+**Last Updated:** February 13, 2026 (Save System Phase A+B Implementation — ISaveableInterface, Registry, WorldStateSaveModule, 4 Component + 1 Actor ISaveable)
+**Framework Version:** 2.13.7
 **Author:** Windwalker Productions
 
 ---
@@ -25,11 +25,10 @@
 
 The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem designed for AAA-level performance, maximum decoupling, and marketplace-ready distribution.
 
-**Current Status:** All core systems implemented. MiniGame system complete. Interface & Save System architecture finalized (V2.13). Workflow, learning, and QA systems documented. **2 plugins incomplete/need refactor:**
-- ModularSaveGameSystem (architecture only - no implementation)
+**Current Status:** All core systems implemented. MiniGame system complete. Interface & Save System architecture finalized (V2.13). Save System Phase A+B implemented (V2.13.7). Workflow, learning, and QA systems documented. **1 plugin incomplete:**
 - WeatherTimeManager (basic day/night cycle planned - weather deferred)
 
-**Latest Milestone:** ModularQuestSystem (13th plugin) — Full quest lifecycle, chains, objective tracking via ObjectiveTracker, EventBus reward distribution (Feb 12, 2026)
+**Latest Milestone:** Save System Phase A+B (V2.13.7) — ISaveableInterface, SaveableRegistry, WorldStateSaveModule, 4 component + 1 actor ISaveable, SaveWorldState/LoadWorldState orchestration (Feb 13, 2026)
 
 **Latest Milestone:** Phase 6.1 (Interface & Save Architecture) - Complete
 
@@ -60,7 +59,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | CraftingPlugin | L2 | Recipes, stations, crafting logic | ✅ Complete |
 | SimulatorFramework | L2 | Devices, applications, mini-games | ✅ Complete |
 | AdvancedWidgetFramework | L2 | Widget management, state machine, pooling, sync, docking | ✅ Complete (V2.13.5) |
-| ModularSaveGameSystem | L2 | Save/load state | ✅ Architecture complete |
+| ModularSaveGameSystem | L2 | Save/load state | ✅ Phase A+B Implementation (V2.13.7) |
 | ModularSpawnSystem | L2 | Entity spawning, pooling, waves, AI/prop | ✅ Complete (V2.13.5) |
 | ModularCheatManager | L2 | Debug/cheat commands | ✅ Complete |
 | ModularEconomyPlugin | L2 | Financial tracking, resources, billing | ✅ Complete (V2.13.5) |
@@ -274,7 +273,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | ~~Widget System Refactor~~ | ~~✅ COMPLETE~~ | ~~V2.13.5 - Feb 6, 2026~~ |
 | Quest System | ✅ Complete | ModularQuestSystem (Feb 12, 2026) |
 | Economy System | ✅ Complete | ModularEconomyPlugin (Feb 9, 2026) |
-| Save System Implementation | ⬜ P3 | Component serialization (cross-cutting) |
+| Save System Phase A+B | ✅ P3 | Foundation + level-placed actors (V2.13.7) |
 
 ---
 
@@ -340,15 +339,15 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
 | P2 High | 0 (all complete) |
-| P3 Medium | 22 (3 editor/deferred + 10 save + 9 time) |
+| P3 Medium | 18 (3 editor/deferred + 6 save Phase C + 9 time) |
 | P4 Low | 7 (marketplace + quality) |
-| Total Remaining Tasks | 37 |
+| Total Remaining Tasks | 33 |
 | Total Helpers | 4 |
 | Known Tech Debt | 0 (all 4 items resolved) |
 | Total Handlers | 6 |
 | Documentation Pages | ~80 (Architecture V2.13) |
 | Repository Files Mapped | 200+ |
-| Incomplete Plugins | 2 (SaveGame architecture only, WeatherTime basic only) |
+| Incomplete Plugins | 1 (WeatherTime basic only) |
 
 ---
 
@@ -496,33 +495,33 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 **Total:** 9 tasks for basic time system
 
-### Save System Implementation — DEFERRED UNTIL ALL MODULES FINALIZED
+### Save System Implementation — ✅ PHASE A+B COMPLETE (February 13, 2026)
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Create ISaveableInterface | ✅ | Architecture complete (V2.13) |
-| Create FSaveData struct | ✅ | Architecture complete (V2.13) |
-| Create SaveableRegistrySubsystem (L0.5) | ⬜ | Foundation layer |
-| Create MasterSaveSubsystem (L2) | ⬜ | Feature layer (optional) |
-| Inventory serialization | ⬜ | BeginPlay/EndPlay announcement |
-| Crafter component serialization | ⬜ | BeginPlay/EndPlay announcement |
-| QuickSlots serialization | ⬜ | BeginPlay/EndPlay announcement |
-| WearableSlots serialization | ⬜ | BeginPlay/EndPlay announcement |
-| Durability serialization | ⬜ | BeginPlay/EndPlay announcement |
-| Device state serialization | ⬜ | BeginPlay/EndPlay announcement |
-| MiniGame state serialization | ⬜ | BeginPlay/EndPlay announcement |
-| Objective state serialization | ⬜ | BeginPlay/EndPlay announcement |
-| Region subsystem serialization | ⬜ | BeginPlay/EndPlay announcement |
-| Station/tool instance serialization | ⬜ | BeginPlay/EndPlay announcement |
+| ISaveableInterface (8 methods) | ✅ | Full UINTERFACE with BlueprintNativeEvent (V2.13.7) |
+| FSaveRecord (binary TArray<uint8>) | ✅ | Replaced FString with UE binary serialization (V2.13.7) |
+| Save Tags (6 tags) | ✅ | Save.Type.*/Save.Category.* in ini+WW_TagLibrary (V2.13.7) |
+| Save Delegates (4 new) | ✅ | Registry + WorldState delegates (V2.13.7) |
+| USaveableRegistrySubsystem (L0.5) | ✅ | UGameInstanceSubsystem, priority-sorted, dirty queries (V2.13.7) |
+| FActorSaveEnvelope + FComponentSaveRecord | ✅ | L0 data structs for actor+component packaging (V2.13.7) |
+| UWorldStateSaveModule (L2) | ✅ | Per-level per-actor storage in MasterSaveGame (V2.13.7) |
+| DurabilityComponent ISaveable | ✅ | Priority 110, binary serialize (V2.13.7) |
+| InventoryComponent ISaveable | ✅ | Priority 120, binary serialize (V2.13.7) |
+| InteractableComponent ISaveable | ✅ | Priority 105, binary serialize (V2.13.7) |
+| DeviceStateComponent ISaveable | ✅ | Priority 115, binary serialize (V2.13.7) |
+| InteractableActor_Master ISaveable | ✅ | Orchestrator pattern — save actor+all components (V2.13.7) |
+| SaveWorldState/LoadWorldState wiring | ✅ | MasterSaveSubsystem orchestration (V2.13.7) |
+| Build.cs L2→L2 cleanup | ✅ | Removed MIS, SimFW deps, added SharedDefaults+MSB (V2.13.7) |
+| Crafter component serialization | ⬜ | Phase C — deferred |
+| QuickSlots serialization | ⬜ | Phase C — deferred |
+| WearableSlots serialization | ⬜ | Phase C — deferred |
+| MiniGame state serialization | ⬜ | Phase C — deferred |
+| Objective state serialization | ⬜ | Phase C — deferred |
+| Runtime-spawned actor GUID system | ⬜ | Phase C — deferred |
 
-**Decision:** Save is cross-cutting concern. Implement once when all stateful systems finalized.
-
-**Architecture Notes:**
-- Two-tier delegate pattern (Rule #37)
-- Registry in ModularSystemsBase (L0.5)
-- SaveGame feature in ModularSaveGameSystem (L2, deletable)
-- Components announce in BeginPlay, revoke in EndPlay
-- No L2→L2 lateral dependencies
+**Phase A+B Complete:** Foundation + Level-Placed Actors (14/14 tasks)
+**Phase C Deferred:** Runtime-spawned actors, remaining component serialization (6 tasks)
 
 ### GameplayTag Audit & Sync (NEW - Golden Rule #48) ✅ COMPLETE
 
@@ -536,7 +535,7 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 **Total:** 5 tasks (5 complete, 0 remaining)
 
-**Total P3 Tasks:** 22 (3 editor/deferred + 10 save implementation + 9 time system)
+**Total P3 Tasks:** 18 (3 editor/deferred + 6 save Phase C deferred + 9 time system)
 
 ---
 
@@ -588,16 +587,45 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | ModularSpawnSystem Completion | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE (Feb 7, 2026) |
 | WeatherTimeManager Basic System | 0 | 0 | 0 | 9 | 0 | 9 |
 | Economy | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE (Feb 9, 2026) |
-| Save Implementation | 0 | 0 | 0 | 10 | 0 | 10 (deferred) |
+| Save Implementation | 0 | 0 | 0 | 6 | 0 | Phase A+B ✅ (Feb 13), Phase C: 6 deferred |
 | GameplayTag Audit & Sync | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE |
 | Quest | 0 | 0 | 0 | 0 | 0 | ✅ COMPLETE (Feb 12, 2026) |
 | Marketplace | 0 | 0 | 0 | 0 | 5 | 5 |
 | Code Quality | 0 | 0 | 0 | 0 | 2 | 2 |
-| **TOTAL** | **0** | **8** | **0** | **22** | **7** | **37** |
+| **TOTAL** | **0** | **8** | **0** | **18** | **7** | **33** |
 
 ---
 
 ## ✅ COMPLETED WORK
+
+### Save System Phase A+B Implementation ✅ COMPLETE (February 13, 2026)
+
+**V2.13.7 — AAA Save System Foundation + Level-Placed Actors**
+
+| Task | Status | Details |
+|------|--------|---------|
+| ISaveableInterface (8 BlueprintNativeEvent methods) | ✅ | SharedDefaults/Interfaces/ModularSaveGameSystem/SaveableInterface.h |
+| FSaveRecord (binary TArray<uint8>, not JSON) | ✅ | SharedDefaults/Lib/Data/ModularSaveGameSystem/SaveData.h |
+| FActorSaveEnvelope + FComponentSaveRecord | ✅ | SharedDefaults/Lib/Data/ModularSaveGameSystem/ActorSaveData.h |
+| 4 Save Delegates (registry + world state) | ✅ | SharedDefaults/Delegates/ModularSaveGameSystem/SaveDelegates.h |
+| 6 Save Tags (Save.Type.*, Save.Category.*) | ✅ | WW_TagLibrary.h/.cpp + DefaultGameplayTags.ini |
+| USaveableRegistrySubsystem (L0.5) | ✅ | MSB/Subsystems/SaveSystem/SaveableRegistrySubsystem.h/.cpp |
+| UWorldStateSaveModule (L2) | ✅ | ModularSaveGameSystem/WorldStateSaveModule.h/.cpp |
+| DurabilityComponent ISaveable (priority 110) | ✅ | MSB/Components/DurabilityComponent.h/.cpp |
+| InventoryComponent ISaveable (priority 120) | ✅ | MIS/Components/InventoryComponent.h/.cpp |
+| InteractableComponent ISaveable (priority 105) | ✅ | MIIS/Components/InteractableComponent.h/.cpp |
+| DeviceStateComponent ISaveable (priority 115) | ✅ | SimFW/Components/DeviceStateComponent.h/.cpp |
+| InteractableActor_Master ISaveable (orchestrator, priority 25) | ✅ | MIS/Actors/Interactables/InteractableActor_Master.h/.cpp |
+| SaveWorldState/LoadWorldState orchestration | ✅ | MasterSaveSubsystem.h/.cpp |
+| Build.cs L2→L2 cleanup (removed MIS, SimFW deps) | ✅ | ModularSaveGameSystem.Build.cs |
+
+**New files:** 4 (SaveableRegistrySubsystem.h/.cpp, ActorSaveData.h, WorldStateSaveModule.h/.cpp)
+**Modified files:** ~20 (4 component .h/.cpp pairs, 2 actor .h/.cpp, WW_TagLibrary.h/.cpp, DefaultGameplayTags.ini, SaveableInterface.h, SaveData.h, SaveDelegates.h, MasterSaveSubsystem.h/.cpp, Build.cs)
+**Tags added:** 6 (Save.Type.LevelPlaced, Save.Type.RuntimeSpawned, Save.Type.PlayerData, Save.Category.Actor, Save.Category.Component, Save.Category.Subsystem)
+**Design:** UE binary serialization (FObjectAndNameAsStringProxyArchive + ArIsSaveGame), UPROPERTY(SaveGame), orchestrator pattern, priority-sorted load, dirty tracking
+**Deferred to Phase C:** Runtime-spawned actor GUID system, remaining component serialization (Crafter, QuickSlots, Wearable, MiniGame, Objective)
+
+---
 
 ### MarqueeSelectionWidget_Base System ✅ COMPLETE (February 12, 2026)
 
