@@ -140,6 +140,7 @@ Windwalker_Productions_SharedDefaults/
 │   │   │   │   ├── GameplayEventData.h
 │   │   │   │   └── QuestData.h
 │   │   │   ├── ModularSaveGameSystem/
+│   │   │   │   ├── ActorSaveData.h
 │   │   │   │   └── SaveData.h
 │   │   │   ├── ModularSpawnSystem/
 │   │   │   │   └── SpawnData.h
@@ -426,7 +427,17 @@ ModularSaveGameSystem/
 │   ├── MasterSaveGame.h
 │   ├── MasterSaveSubsystem.h
 │   ├── ModularSaveGameSystem.h
-│   └── UserSettingsSaveModule.h
+│   ├── UserSettingsSaveModule.h
+│   └── WorldStateSaveModule.h
+├── Source/ModularSaveGameSystem/Private/
+│   ├── AbilitiesSaveModule.cpp
+│   ├── CharacterSaveModule.cpp
+│   ├── InventorySaveModule.cpp
+│   ├── MasterSaveGame.cpp
+│   ├── MasterSaveSubsystem.cpp
+│   ├── ModularSaveGameSystem.cpp
+│   ├── UserSettingsSaveModule.cpp
+│   └── WorldStateSaveModule.cpp
 └── Intermediate/Build/Win64/UnrealEditor/Inc/ModularSaveGameSystem/UHT/
     ├── AbilitiesSaveModule.generated.h
     ├── CharacterSaveModule.generated.h
@@ -1193,7 +1204,7 @@ OnCraftingComplete.Broadcast(RecipeID);  // Plugin A broadcasts
 | ICraftingInterface | `Interfaces/ModularInventorySystem/CraftingInterface.h` | GetCrafterAsActorComponent() | 7 | Crafter capabilities |
 | IMiniGameStationInterface | `Interfaces/SimulatorFramework/MiniGameStationInterface.h` | GetStationAsActor() | 6 | Mini-game lifecycle |
 | IDurabilityInterface | `Interfaces/SimulatorFramework/DurabilityInterface.h` | GetDurabilityAsActorComponent() | 7 | Durability operations |
-| ISaveableInterface | `Interfaces/ModularSaveGameSystem/SaveableInterface.h` | GetSaveableAsObject() | 7 | Save/load state |
+| ISaveableInterface | `Interfaces/ModularSaveGameSystem/SaveableInterface.h` | GetSaveID(), SaveState(), LoadState() | 8 | Save/load state |
 | ICameraControlInterface | `Interfaces/ModularPlayerController/CameraControlInterface.h` | GetCameraControllerAsActor() | 5 | Camera modes |
 | IPhysicalInteractionInterface | `Interfaces/SimulatorFramework/PhysicalInteractionInterface.h` | GetPhysicalInteractableAsActor() | 6 | Physics grab |
 | IManagedWidgetInterface | `Interfaces/AdvancedWidgetFramework/ManagedWidgetInterface.h` | GetManagedWidgetAsObject() | 3 | Widget lifecycle (GetManagedWidgetAsObject, GetWidgetCategoryTag, IsValidWidget) |
@@ -1368,9 +1379,10 @@ USaveGameSubsystem (L2) — Feature Layer (optional, deletable)
 
 **File Locations:**
 - Interface: `Windwalker_Productions_SharedDefaults/Interfaces/ModularSaveGameSystem/SaveableInterface.h`
-- Data Struct: `Windwalker_Productions_SharedDefaults/Lib/Data/ModularSaveGameSystem/SaveData.h`
+- Data Structs: `Windwalker_Productions_SharedDefaults/Lib/Data/ModularSaveGameSystem/SaveData.h` (FSaveRecord, FModularSaveData)
+- Actor Data: `Windwalker_Productions_SharedDefaults/Lib/Data/ModularSaveGameSystem/ActorSaveData.h` (FActorSaveEnvelope, FComponentSaveRecord)
 - Delegates: `Windwalker_Productions_SharedDefaults/Delegates/ModularSaveGameSystem/SaveDelegates.h`
-- Registry: `ModularSystemsBase/Subsystems/SaveableRegistrySubsystem.h` (L0.5)
+- Registry: `ModularSystemsBase/Subsystems/SaveSystem/SaveableRegistrySubsystem.h` (L0.5)
 - Save System: `ModularSaveGameSystem/MasterSaveSubsystem.h` (L2)
 
 ### Why Delegate Pattern
@@ -1382,7 +1394,9 @@ USaveGameSubsystem (L2) — Feature Layer (optional, deletable)
 - Plugin independence: Delete SaveGameSystem → components still compile
 - Framework Goal #5: "Delete any plugin → others still compile"
 
-### ISaveableInterface (Complete)
+### ISaveableInterface (Complete — Phase A+B, V2.13.7)
+
+8 methods organized in 4 groups: Identity, Serialization, Dirty Tracking, Post-Load.
 
 ```cpp
 // File: Windwalker_Productions_SharedDefaults/Interfaces/ModularSaveGameSystem/SaveableInterface.h
@@ -1391,10 +1405,11 @@ USaveGameSubsystem (L2) — Feature Layer (optional, deletable)
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "GameplayTagContainer.h"
 #include "Lib/Data/ModularSaveGameSystem/SaveData.h"
 #include "SaveableInterface.generated.h"
 
-UINTERFACE(MinimalAPI, BlueprintType)
+UINTERFACE(MinimalAPI, Blueprintable)
 class USaveableInterface : public UInterface
 {
     GENERATED_BODY()
@@ -1405,231 +1420,85 @@ class ISaveableInterface
     GENERATED_BODY()
 
 public:
-    /**
-     * Get underlying UObject (polymorphic getter)
-     * MANDATORY GETTER for type-safe access
-     * 
-     * ATOMIC CONTRACT:
-     * - Returns this object as UObject*
-     * - Never returns nullptr
-     * - Used for save system registration
-     */
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save")
-    UObject* GetSaveableAsObject() const;
-    
-    /**
-     * Get save data from this object
-     * 
-     * ATOMIC CONTRACT (Rule #40):
-     * - Serializes current state to FSaveData
-     * - Clears dirty flag after successful save
-     * - Must be deterministic (same state = same data)
-     * - < 0.02ms execution time
-     */
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save")
-    FSaveData GetSaveData() const;
-    
-    /**
-     * Load save data into this object
-     * 
-     * ATOMIC CONTRACT:
-     * - Deserializes FSaveData into current state
-     * - Validates data before applying
-     * - Marks dirty if state changed
-     * - < 0.02ms execution time
-     */
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save")
-    void LoadSaveData(const FSaveData& Data);
-    
-    /**
-     * Get globally unique save ID (Rule #38)
-     * 
-     * ATOMIC CONTRACT:
-     * - Format: "Actor.Component.Instance" for components
-     * - Format: "Class.Name" for actors
-     * - Must be deterministic (same object = same ID)
-     * - Max 256 characters
-     * - Never empty string
-     */
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save")
+    // ================================================================
+    // IDENTITY (3 methods)
+    // ================================================================
+
+    /** Unique persistent ID. Level-placed: GetPathName(). Runtime: FGuid (Phase C). */
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save System")
     FString GetSaveID() const;
-    
-    /**
-     * Check if object state changed since last save (Rule #40)
-     * 
-     * ATOMIC CONTRACT:
-     * - Returns true if state modified
-     * - Returns false if unchanged
-     * - Prevents unnecessary serialization
-     * - Updated by MarkDirty() calls
-     */
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save")
-    bool IsDirty() const;
-    
-    /**
-     * Get save priority for load order (Rule #39)
-     * 
-     * ATOMIC CONTRACT:
-     * - Actors: 0-49 (load first)
-     * - Subsystems: 50-99
-     * - Components: 100-149
-     * - Managers: 150-199
-     * - UI: 200+ (load last)
-     */
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save")
+
+    /** Load priority. Lower = loads first. Actors: 0-49, Components: 100-149. Rule #39. */
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save System")
     int32 GetSavePriority() const;
-    
-    /**
-     * Check if child objects should be saved
-     * 
-     * ATOMIC CONTRACT:
-     * - Returns true if children need saving
-     * - Returns false to skip children
-     * - Used for hierarchical save optimization
-     */
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save")
-    bool ShouldSaveChildren() const;
+
+    /** Save type tag: Save.Type.LevelPlaced / RuntimeSpawned / PlayerData. */
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save System")
+    FGameplayTag GetSaveType() const;
+
+    // ================================================================
+    // SERIALIZATION (2 methods — Binary via UE archive)
+    // ================================================================
+
+    /** Serialize SaveGame properties into OutRecord via FMemoryWriter + ArIsSaveGame=true. */
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save System")
+    bool SaveState(FSaveRecord& OutRecord);
+
+    /** Deserialize state from InRecord. Calls OnSaveDataLoaded() after success. */
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save System")
+    bool LoadState(const FSaveRecord& InRecord);
+
+    // ================================================================
+    // DIRTY TRACKING (2 methods — Rule #40)
+    // ================================================================
+
+    /** Returns true if unsaved changes exist since last ClearDirty(). */
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save System")
+    bool IsDirty() const;
+
+    /** Clears the dirty flag. Called by save system after successful save. */
+    UFUNCTION(BlueprintNativeEvent, Category = "Save System")
+    void ClearDirty();
+
+    // ================================================================
+    // POST-LOAD CALLBACK (1 method — AAA pattern)
+    // ================================================================
+
+    /** Called after state restored. Use to update visuals, rebuild caches. */
+    UFUNCTION(BlueprintNativeEvent, Category = "Save System")
+    void OnSaveDataLoaded();
 };
 ```
 
-### Component Implementation Pattern
+**Phase Status:** Phase A (data layer) + Phase B (world state) complete. Phase C (runtime-spawned actors via FGuid) deferred.
+**Async:** `bAsync` parameter exists on SaveGame() but defaults to sync. Full async save/load deferred.
+
+### Component Implementation Pattern (V2.13.7)
 
 ```cpp
-// File: ModularInventorySystem/Components/InventoryComponent.h
+// Pattern: Any component implementing ISaveableInterface
+// Uses binary serialization via FMemoryWriter + ArIsSaveGame=true
 
-#pragma once
+// ISaveableInterface implementation (8 methods):
+// Identity:
+virtual FString GetSaveID_Implementation() const override;       // "Owner.Class.Instance"
+virtual int32 GetSavePriority_Implementation() const override;   // 100-149 for components
+virtual FGameplayTag GetSaveType_Implementation() const override; // Save.Type.LevelPlaced
 
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "Interfaces/ModularSaveGameSystem/SaveableInterface.h"  // L0 interface
-#include "InventoryComponent.generated.h"
+// Serialization (binary):
+virtual bool SaveState_Implementation(FSaveRecord& OutRecord) override;   // FMemoryWriter
+virtual bool LoadState_Implementation(const FSaveRecord& InRecord) override; // FMemoryReader
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class MODULARINVENTORYSYSTEM_API UInventoryComponent : public UActorComponent, public ISaveableInterface
-{
-    GENERATED_BODY()
+// Dirty tracking:
+virtual bool IsDirty_Implementation() const override;   // return bIsDirty
+virtual void ClearDirty_Implementation() override;       // bIsDirty = false
 
-public:
-    UInventoryComponent();
+// Post-load:
+virtual void OnSaveDataLoaded_Implementation() override; // Rebuild caches, update visuals
 
-protected:
-    virtual void BeginPlay() override;
-    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-public:
-    // ISaveableInterface implementation
-    
-    virtual UObject* GetSaveableAsObject_Implementation() const override
-    {
-        return const_cast<UInventoryComponent*>(this);
-    }
-    
-    virtual FSaveData GetSaveData_Implementation() const override
-    {
-        FSaveData Data;
-        Data.SaveID = GetSaveID_Implementation();
-        Data.Priority = GetSavePriority_Implementation();
-        
-        // Serialize inventory state
-        // ... serialization code ...
-        
-        // Clear dirty flag (Rule #40)
-        bIsDirty = false;
-        
-        return Data;
-    }
-    
-    virtual void LoadSaveData_Implementation(const FSaveData& Data) override
-    {
-        // Validate data
-        if (!Data.IsValid())
-        {
-            UE_LOG(LogSave, Warning, TEXT("Invalid save data for: %s"), *GetSaveID_Implementation());
-            return;
-        }
-        
-        // Deserialize inventory state
-        // ... deserialization code ...
-        
-        // Mark dirty after load
-        MarkDirty();
-    }
-    
-    virtual FString GetSaveID_Implementation() const override
-    {
-        // Rule #38: Globally unique format
-        if (!GetOwner())
-        {
-            UE_LOG(LogSave, Error, TEXT("GetSaveID called on component without owner"));
-            return FString();
-        }
-        
-        return FString::Printf(TEXT("%s.%s.%s"),
-            *GetOwner()->GetName(),
-            *GetClass()->GetName(),
-            *GetFName().ToString()
-        );
-    }
-    
-    virtual bool IsDirty_Implementation() const override
-    {
-        return bIsDirty;
-    }
-    
-    virtual int32 GetSavePriority_Implementation() const override
-    {
-        // Rule #39: Components = 100-149
-        return 100;
-    }
-    
-    virtual bool ShouldSaveChildren_Implementation() const override
-    {
-        return false;  // Inventory has no child saveables
-    }
-
-private:
-    mutable bool bIsDirty = false;
-    
-    void MarkDirty()
-    {
-        bIsDirty = true;
-    }
-};
-```
-
-```cpp
-// File: ModularInventorySystem/Components/InventoryComponent.cpp
-
-#include "InventoryComponent.h"
-#include "Subsystems/SaveableRegistrySubsystem.h"  // L0.5 foundation
-
-void UInventoryComponent::BeginPlay()
-{
-    Super::BeginPlay();
-    
-    // Rule #37: Announce to registry (communication UP to L0.5)
-    if (UGameInstance* GI = GetWorld()->GetGameInstance())
-    {
-        if (USaveableRegistrySubsystem* Registry = GI->GetSubsystem<USaveableRegistrySubsystem>())
-        {
-            Registry->AnnounceSaveable(this);  // Depends DOWN on L0.5
-        }
-    }
-}
-
-void UInventoryComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-    // Rule #37: Revoke from registry
-    if (UGameInstance* GI = GetWorld()->GetGameInstance())
-    {
-        if (USaveableRegistrySubsystem* Registry = GI->GetSubsystem<USaveableRegistrySubsystem>())
-        {
-            Registry->RevokeSaveable(this);
-        }
-    }
-    
-    Super::EndPlay(EndPlayReason);
-}
+// Registration (BeginPlay/EndPlay):
+// USaveableRegistrySubsystem::Get(this)->RegisterSaveable(this);
+// USaveableRegistrySubsystem::Get(this)->UnregisterSaveable(this);
 ```
 
 ### Save Priority System (Rule #39)
@@ -1682,45 +1551,25 @@ FString::Printf(TEXT("%s"),
 ### Dirty Tracking (Rule #40)
 
 ```cpp
+// Pattern: Any component with save state
 class UInventoryComponent
 {
 private:
     mutable bool bIsDirty = false;
-    
-    void MarkDirty()
-    {
-        bIsDirty = true;
-    }
+    void MarkSaveDirty() { bIsDirty = true; }
 
 public:
+    // State-changing methods call MarkSaveDirty()
     virtual bool AddItem_Implementation(FGameplayTag ItemID, int32 Quantity) override
     {
         bool bSuccess = Internal_AddItem(ItemID, Quantity);
-        
-        // Mark dirty on state change
-        if (bSuccess)
-        {
-            MarkDirty();
-        }
-        
+        if (bSuccess) { MarkSaveDirty(); }
         return bSuccess;
     }
-    
-    virtual FSaveData GetSaveData_Implementation() const override
-    {
-        FSaveData Data;
-        // ... serialize state ...
-        
-        // Clear dirty flag after save (Rule #40)
-        bIsDirty = false;
-        
-        return Data;
-    }
-    
-    virtual bool IsDirty_Implementation() const override
-    {
-        return bIsDirty;
-    }
+
+    // ISaveableInterface dirty tracking
+    virtual bool IsDirty_Implementation() const override { return bIsDirty; }
+    virtual void ClearDirty_Implementation() override { bIsDirty = false; }
 };
 ```
 
