@@ -1,7 +1,7 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** February 14, 2026 (Save System AAA Validation Fixes — L2→L2 Build.cs fix, Debug.SaveSystem tag, FOnActorStateRestored wiring, delegate relocation to L0, architecture doc update)
-**Framework Version:** 2.13.7
+**Last Updated:** February 14, 2026 (WeatherTimeManager Plugin — 14th plugin: TimeTrackingSubsystem, 4 widget bases, 16 tags, ITimeWeatherProviderInterface, console commands)
+**Framework Version:** 2.13.8
 **Author:** Windwalker Productions
 
 ---
@@ -25,10 +25,9 @@
 
 The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem designed for AAA-level performance, maximum decoupling, and marketplace-ready distribution.
 
-**Current Status:** All core systems implemented. MiniGame system complete. Interface & Save System architecture finalized (V2.13). Save System Phase A+B implemented (V2.13.7). Workflow, learning, and QA systems documented. **1 plugin incomplete:**
-- WeatherTimeManager (basic day/night cycle planned - weather deferred)
+**Current Status:** All core systems implemented. 14 plugins complete. Save System Phase A+B implemented (V2.13.7). WeatherTimeManager core complete (V2.13.8). Workflow, learning, and QA systems documented.
 
-**Latest Milestone:** Save System Phase A+B (V2.13.7) — ISaveableInterface, SaveableRegistry, WorldStateSaveModule, 4 component + 1 actor ISaveable, SaveWorldState/LoadWorldState orchestration (Feb 13, 2026)
+**Latest Milestone:** WeatherTimeManager Plugin (V2.13.8) — TimeTrackingSubsystem, 4 widget base classes, 16 tags, ITimeWeatherProviderInterface, console commands (Feb 14, 2026)
 
 **Latest Milestone:** Phase 6.1 (Interface & Save Architecture) - Complete
 
@@ -47,7 +46,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 
 ---
 
-## 🗂️ PLUGIN ARCHITECTURE (13 Plugins)
+## 🗂️ PLUGIN ARCHITECTURE (14 Plugins)
 
 | Plugin | Layer | Purpose | Status |
 |--------|-------|---------|--------|
@@ -64,6 +63,7 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | ModularCheatManager | L2 | Debug/cheat commands | ✅ Complete |
 | ModularEconomyPlugin | L2 | Financial tracking, resources, billing | ✅ Complete (V2.13.5) |
 | ModularQuestSystem | L2 | Quest lifecycle, chains, objective tracking | ✅ Complete (V2.13.5) |
+| WeatherTimeManager | L2 | Time-of-day, weather states, sky provider sync | ✅ Core Complete (V2.13.8) |
 
 ### Future Plugins (Planned)
 
@@ -74,11 +74,11 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | **AdvancedWeaponFramework** | L2 | Weapons, attachments, ballistics, ammunition | ⬜ Planned | SharedDefaults, ModularSystemsBase, MIS |
 | **ModularLevelingSkillSystem** | L3 | XP, leveling, skill trees, rank gates | ⬜ Planned | SharedDefaults, ModularSystemsBase |
 | **ModularReputationSystem** | L4 | NPC relationships, faction reputation | ⬜ Planned | SharedDefaults, ModularSystemsBase, Leveling |
-| **WeatherTimeManager** | L2 | Day/night cycle, time tracking (defer weather effects) | 🔄 Basic system only | SharedDefaults, ModularSystemsBase |
+| ~~**WeatherTimeManager**~~ | ~~L2~~ | ~~Day/night cycle, time tracking~~ | ~~✅ Core Complete (V2.13.8)~~ | ~~SharedDefaults, ModularSystemsBase~~ |
 
 **Note:** AdvancedWeaponFramework mentioned in past conversations but deferred pending core system completion.
 
-**Plugin Count Change:** 8 → 11 → 13 plugins (Added Save, Spawn, Cheat in V2.13; Economy, Quest in V2.13.5)
+**Plugin Count Change:** 8 → 11 → 13 → 14 plugins (Added Save, Spawn, Cheat in V2.13; Economy, Quest in V2.13.5; WeatherTimeManager in V2.13.8)
 
 ---
 
@@ -331,11 +331,11 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 
 | Metric | Value |
 |--------|-------|
-| Total Plugins (Current) | 13 |
+| Total Plugins (Current) | 14 |
 | Total Plugins (Future) | 3 planned |
 | Phases Complete | 13/14 |
 | Golden Rules | 48 (in Architecture V2.13.5) |
-| Interfaces | 12 |
+| Interfaces | 13 |
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
 | P2 High | 0 (all complete) |
@@ -522,6 +522,24 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 
 **Phase A+B Complete:** Foundation + Level-Placed Actors (14/14 tasks)
 **Phase C Deferred:** Runtime-spawned actors, remaining component serialization (6 tasks)
+
+### WeatherTimeManager Plugin (Core) — ✅ COMPLETE (February 14, 2026)
+
+| Task | Status | Notes |
+|------|--------|-------|
+| 16 tags (ini + WW_TagLibrary) | ✅ | Time.State.*, Weather.Type.*, Weather.Transition.*, Debug.TimeWeather, UI.Widget.Category.TimeWeather |
+| FTimeOfDayState, FWeatherConfig, FWeatherState, FTimeThreshold | ✅ | L0 data structs (Rule #12) |
+| 8 delegates (TimeWeatherDelegates.h) | ✅ | FOnHourChanged, FOnDayChanged, FOnTimeOfDayChanged, FOnWeatherChanged, etc. |
+| ITimeWeatherProviderInterface | ✅ | 6 methods, mandatory getter (Rule #29) |
+| Plugin boilerplate (uplugin, Build.cs, module) | ✅ | 14th plugin, deps: SharedDefaults + MSB |
+| UTimeTrackingSubsystem | ✅ | Time + weather API, FTimerHandle 10Hz, provider push, console commands |
+| UTimeWeatherWidget_Base | ✅ | Auto-bind delegates, cached subsystem (Rule #41), extends UManagedWidget_Master |
+| UClockWidget_AnalogBase | ✅ | Hour/minute/second hand angles, OnMinuteChanged |
+| UClockWidget_DigitalBase | ✅ | 12H/24H/seconds formats, bUse24HourFormat config |
+| UDateTimeWidget_Base | ✅ | Day text, period name, weather name, full datetime text |
+
+**Files created:** 17 new code + 4 modified = 21 code files
+**Deferred:** Sleep mechanic, MP sleep consensus, ISleepableActorInterface, USleepWidget_Base, day-end summary, weather randomization
 
 ### Save System AAA Validation Fixes — ✅ COMPLETE (February 14, 2026)
 
@@ -1003,9 +1021,9 @@ Senior-level code review of all 4 FTimerHandle instances across 3 classes. Found
 | Metric | Value |
 |--------|-------|
 | Phases Complete | 13/14 |
-| Plugins | 13 |
+| Plugins | 14 |
 | Golden Rules | 48 (complete) |
-| Interfaces | 12 |
+| Interfaces | 13 |
 | Handlers | 6 |
 | P0 Blockers | 0 |
 | Ready for Implementation | ✅ YES |
@@ -1039,7 +1057,7 @@ Senior-level code review of all 4 FTimerHandle instances across 3 classes. Found
 
 ---
 
-*Document Version: 2.13.5*
-*Last Updated: February 12, 2026*
-*Framework Version: 2.13.5*
+*Document Version: 2.13.8*
+*Last Updated: February 14, 2026*
+*Framework Version: 2.13.8*
 *Author: Windwalker Productions*

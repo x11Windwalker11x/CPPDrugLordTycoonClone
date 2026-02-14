@@ -3,7 +3,7 @@
 **Comprehensive Framework Documentation**  
 **Date:** February 2, 2026  
 **Status:** Production Ready  
-**Revision:** V2.13.6 - AWF Widget Location Refactor (ManagedWidget_Master→MSB, widgets→owning plugins, 5 L2→L2 violations eliminated)
+**Revision:** V2.13.8 - WeatherTimeManager Plugin (14th plugin: TimeTrackingSubsystem, 4 widget bases, 16 tags, ITimeWeatherProviderInterface)
 
 ---
 
@@ -37,7 +37,7 @@
 - **Network Ready:** Server RPCs, validation, replication by default
 - **Marketplace Ready:** Professional quality, fully documented
 
-### Plugin Count: 13 Plugins
+### Plugin Count: 14 Plugins
 
 | Plugin | Layer | Purpose |
 |--------|-------|---------|
@@ -54,6 +54,7 @@
 | ModularCheatManager | L2 | Debug/cheat commands |
 | ModularEconomyPlugin | L2 | Financial tracking, resources, billing |
 | ModularQuestSystem | L2 | Quest lifecycle, chains, objective tracking |
+| WeatherTimeManager | L2 | Time-of-day, weather states, sky provider sync |
 
 ---
 
@@ -532,6 +533,49 @@ ModularQuestSystem/
 └── ModularQuestSystem.uplugin
 ```
 
+### WeatherTimeManager (L2)
+
+```
+WeatherTimeManager/
+├── Source/WeatherTimeManager/
+│   ├── Public/
+│   │   ├── Subsystems/
+│   │   │   └── TimeTrackingSubsystem.h
+│   │   ├── UI/
+│   │   │   ├── TimeWeatherWidget_Base.h
+│   │   │   ├── ClockWidget_AnalogBase.h
+│   │   │   ├── ClockWidget_DigitalBase.h
+│   │   │   └── DateTimeWidget_Base.h
+│   │   └── WeatherTimeManager.h
+│   ├── Private/
+│   │   ├── Subsystems/
+│   │   │   └── TimeTrackingSubsystem.cpp
+│   │   ├── UI/
+│   │   │   ├── TimeWeatherWidget_Base.cpp
+│   │   │   ├── ClockWidget_AnalogBase.cpp
+│   │   │   ├── ClockWidget_DigitalBase.cpp
+│   │   │   └── DateTimeWidget_Base.cpp
+│   │   └── WeatherTimeManager.cpp
+│   └── WeatherTimeManager.Build.cs
+└── WeatherTimeManager.uplugin
+```
+
+**Key APIs:**
+- `UTimeTrackingSubsystem::Get(WorldContext)` — Static accessor
+- Time: `GetCurrentHour()`, `SetTimeOfDay()`, `SetTimeSpeed()`, `PauseTime()`/`ResumeTime()`, `StartTimeProgression()`/`StopTimeProgression()`
+- Weather: `SetWeatherImmediate()`, `TransitionToWeather()`, `CancelWeatherTransition()`
+- Providers: `RegisterSkyProvider()`, `DiscoverSkyProviders()`
+- Console: `WW.SetTime`, `WW.SetSpeed`, `WW.PauseTime`, `WW.SetWeather`
+
+**L0 Contracts (SharedDefaults):**
+- Data: `FTimeOfDayState`, `FWeatherConfig`, `FWeatherState`, `FTimeThreshold`
+- Delegates: `FOnHourChanged`, `FOnDayChanged`, `FOnTimeOfDayChanged`, `FOnWeatherChanged`, `FOnWeatherTransitionStarted`, `FOnWeatherTransitionComplete`, `FOnTimePaused`, `FOnTimeResumed`
+- Interface: `ITimeWeatherProviderInterface` (6 methods: SetTimeOfDay, GetCurrentTimeOfDay, SetWeatherState, GetCurrentWeatherTag, SetWeatherTransitionAlpha, GetTimeWeatherComponent)
+
+**Tags (16):** Time.State.{Dawn,Morning,Afternoon,Evening,Dusk,Night}, Weather.Type.{Clear,Cloudy,Rain,Fog,Snow,Storm}, Weather.Transition.{Active,Complete}, Debug.TimeWeather, UI.Widget.Category.TimeWeather
+
+**Deferred to next session:** Sleep mechanic, multiplayer sleep consensus, ISleepableActorInterface, USleepWidget_Base, day-end summary, weather randomization
+
 ---
 
 ## 📋 INCLUDE PATH REFERENCE
@@ -549,6 +593,7 @@ ModularQuestSystem/
 #include "Interfaces/AdvancedWidgetFramework/ReplicatedWidgetInterface.h"
 #include "Interfaces/AdvancedWidgetFramework/DockableWidgetInterface.h"
 #include "Interfaces/ModularQuestSystem/QuestGiverInterface.h"
+#include "Interfaces/WeatherTimeManager/TimeWeatherProviderInterface.h"
 ```
 
 **2. SharedDefaults Delegates:**
@@ -560,6 +605,7 @@ ModularQuestSystem/
 #include "Delegates/ModularSaveGameSystem/SaveDelegates.h"
 #include "Delegates/AdvancedWidgetFramework/WW_WidgetDelegates.h"
 #include "Delegates/ModularQuestSystem/QuestDelegates.h"
+#include "Delegates/WeatherTimeManager/TimeWeatherDelegates.h"
 ```
 
 **3. SharedDefaults Data Structs:**
@@ -576,6 +622,7 @@ ModularQuestSystem/
 #include "Lib/Data/AdvancedWidgetFramework/DockableLayoutData.h"
 #include "Lib/Data/ModularQuestSystem/QuestData.h"
 #include "Lib/Data/ModularSystemsBase/MarqueeSelectionData.h"
+#include "Lib/Data/WeatherTimeManager/TimeWeatherData.h"
 ```
 
 **4. SharedDefaults Enums & Tags:**

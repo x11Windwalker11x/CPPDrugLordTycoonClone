@@ -75,6 +75,10 @@
 		{
 			"Name": "ModularQuestSystem",
 			"Enabled": true
+		},
+		{
+			"Name": "WeatherTimeManager",
+			"Enabled": true
 		}
 	]
 }
