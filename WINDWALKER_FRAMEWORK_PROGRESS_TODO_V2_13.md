@@ -1,7 +1,7 @@
 # WINDWALKER FRAMEWORK - PROGRESS & TODO V2.13
 
-**Last Updated:** February 14, 2026 (WeatherTimeManager Plugin — 14th plugin: TimeTrackingSubsystem, 4 widget bases, 16 tags, ITimeWeatherProviderInterface, console commands)
-**Framework Version:** 2.13.8
+**Last Updated:** February 14, 2026 (Sleep Mechanic + MP Consensus — 7 sleep tags, ISleepableActorInterface, ASleepManagerAuthority, 6 widget bases, 23 total tags)
+**Framework Version:** 2.13.9
 **Author:** Windwalker Productions
 
 ---
@@ -25,9 +25,9 @@
 
 The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem designed for AAA-level performance, maximum decoupling, and marketplace-ready distribution.
 
-**Current Status:** All core systems implemented. 14 plugins complete. Save System Phase A+B implemented (V2.13.7). WeatherTimeManager core complete (V2.13.8). Workflow, learning, and QA systems documented.
+**Current Status:** All core systems implemented. 14 plugins complete. Save System Phase A+B implemented (V2.13.7). WeatherTimeManager core + sleep mechanic complete (V2.13.9). Workflow, learning, and QA systems documented.
 
-**Latest Milestone:** WeatherTimeManager Plugin (V2.13.8) — TimeTrackingSubsystem, 4 widget base classes, 16 tags, ITimeWeatherProviderInterface, console commands (Feb 14, 2026)
+**Latest Milestone:** Sleep Mechanic + MP Consensus (V2.13.9) — 7 sleep tags, ISleepableActorInterface, ASleepManagerAuthority, FSleepRequest/FSleepVoteState, USleepWidget_Base/USleepVoteWidget_Base, WW.Sleep/WW.CancelSleep (Feb 14, 2026)
 
 **Latest Milestone:** Phase 6.1 (Interface & Save Architecture) - Complete
 
@@ -335,19 +335,19 @@ The Windwalker Modular Framework is a comprehensive UE5.5+ C++ plugin ecosystem 
 | Total Plugins (Future) | 3 planned |
 | Phases Complete | 13/14 |
 | Golden Rules | 48 (in Architecture V2.13.5) |
-| Interfaces | 13 |
+| Interfaces | 14 |
 | P0 Blockers | 0 |
 | P1 Critical | 8 (multiplayer testing, deferred) |
 | P2 High | 0 (all complete) |
-| P3 Medium | 18 (3 editor/deferred + 6 save Phase C + 9 time) |
+| P3 Medium | 11 (3 editor/deferred + 6 save Phase C + 2 time remaining) |
 | P4 Low | 7 (marketplace + quality) |
-| Total Remaining Tasks | 33 |
+| Total Remaining Tasks | 26 |
 | Total Helpers | 4 |
 | Known Tech Debt | 0 (all 4 items resolved) |
 | Total Handlers | 6 |
 | Documentation Pages | ~80 (Architecture V2.13) |
 | Repository Files Mapped | 200+ |
-| Incomplete Plugins | 1 (WeatherTime basic only) |
+| Incomplete Plugins | 0 (all core systems complete) |
 
 ---
 
@@ -539,7 +539,24 @@ All P0 tasks completed. Framework is functional and architecturally sound.
 | UDateTimeWidget_Base | ✅ | Day text, period name, weather name, full datetime text |
 
 **Files created:** 17 new code + 4 modified = 21 code files
-**Deferred:** Sleep mechanic, MP sleep consensus, ISleepableActorInterface, USleepWidget_Base, day-end summary, weather randomization
+**Deferred (resolved in V2.13.9):** ~~Sleep mechanic, MP sleep consensus, ISleepableActorInterface, USleepWidget_Base~~
+
+### Sleep Mechanic + MP Consensus — ✅ COMPLETE (February 14, 2026)
+
+| Task | Status | Notes |
+|------|--------|-------|
+| 7 sleep tags (ini + WW_TagLibrary) | ✅ | Sleep.State.{Awake,Initiating,Sleeping,Waking}, Sleep.Vote.{Pending,Approved,Rejected} |
+| 5 sleep delegates (SleepDelegates.h) | ✅ | FOnSleepRequested, FOnSleepStarted, FOnSleepCompleted, FOnSleepCancelled, FOnSleepVoteChanged |
+| ISleepableActorInterface | ✅ | 6 methods: CanSleep, GetSleepLocation, OnSleepStarted/Completed/Cancelled, GetSleepComponent |
+| FSleepRequest + FSleepVoteState (SleepData.h) | ✅ | L0 data structs (Rule #12), VoteThreshold 100%, VoteTimeout 30s |
+| Sleep logic in UTimeTrackingSubsystem | ✅ | RequestSleep, CancelSleep, BeginSleep, CompleteSleep, midnight wrap-around |
+| ASleepManagerAuthority | ✅ | Server-spawned replicated actor, Server/Client/Multicast RPCs, lazy spawn |
+| USleepWidget_Base | ✅ | Sleep progress overlay, 4Hz polling, extends UManagedWidget_Master |
+| USleepVoteWidget_Base | ✅ | MP vote prompt, countdown timer, modal category |
+| Console commands WW.Sleep / WW.CancelSleep | ✅ | Integrated with existing command pattern |
+
+**Files created:** 6 new + 5 modified = 11 code files
+**Deferred:** Day-end summary, weather randomization
 
 ### Save System AAA Validation Fixes — ✅ COMPLETE (February 14, 2026)
 

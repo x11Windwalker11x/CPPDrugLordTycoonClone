@@ -2,7 +2,7 @@
 > **P1:** Max effectiveness, no info loss. **P2:** Min tokens. See full docs for details.
 
 ## Project
-**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.8
+**CPPDrugLordTycoonClone** - UE 5.6 C++ | Windwalker Framework V2.13.9
 
 ## Build
 ```bash

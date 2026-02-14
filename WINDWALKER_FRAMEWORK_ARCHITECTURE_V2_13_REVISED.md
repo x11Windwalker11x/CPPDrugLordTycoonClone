@@ -3,7 +3,7 @@
 **Comprehensive Framework Documentation**  
 **Date:** February 2, 2026  
 **Status:** Production Ready  
-**Revision:** V2.13.8 - WeatherTimeManager Plugin (14th plugin: TimeTrackingSubsystem, 4 widget bases, 16 tags, ITimeWeatherProviderInterface)
+**Revision:** V2.13.9 - Sleep Mechanic + MP Consensus (7 sleep tags, ISleepableActorInterface, ASleepManagerAuthority, 6 widget bases, 23 total tags)
 
 ---
 
@@ -541,20 +541,28 @@ WeatherTimeManager/
 │   ├── Public/
 │   │   ├── Subsystems/
 │   │   │   └── TimeTrackingSubsystem.h
+│   │   ├── Networking/
+│   │   │   └── SleepManagerAuthority.h
 │   │   ├── UI/
 │   │   │   ├── TimeWeatherWidget_Base.h
 │   │   │   ├── ClockWidget_AnalogBase.h
 │   │   │   ├── ClockWidget_DigitalBase.h
-│   │   │   └── DateTimeWidget_Base.h
+│   │   │   ├── DateTimeWidget_Base.h
+│   │   │   ├── SleepWidget_Base.h
+│   │   │   └── SleepVoteWidget_Base.h
 │   │   └── WeatherTimeManager.h
 │   ├── Private/
 │   │   ├── Subsystems/
 │   │   │   └── TimeTrackingSubsystem.cpp
+│   │   ├── Networking/
+│   │   │   └── SleepManagerAuthority.cpp
 │   │   ├── UI/
 │   │   │   ├── TimeWeatherWidget_Base.cpp
 │   │   │   ├── ClockWidget_AnalogBase.cpp
 │   │   │   ├── ClockWidget_DigitalBase.cpp
-│   │   │   └── DateTimeWidget_Base.cpp
+│   │   │   ├── DateTimeWidget_Base.cpp
+│   │   │   ├── SleepWidget_Base.cpp
+│   │   │   └── SleepVoteWidget_Base.cpp
 │   │   └── WeatherTimeManager.cpp
 │   └── WeatherTimeManager.Build.cs
 └── WeatherTimeManager.uplugin
@@ -564,17 +572,25 @@ WeatherTimeManager/
 - `UTimeTrackingSubsystem::Get(WorldContext)` — Static accessor
 - Time: `GetCurrentHour()`, `SetTimeOfDay()`, `SetTimeSpeed()`, `PauseTime()`/`ResumeTime()`, `StartTimeProgression()`/`StopTimeProgression()`
 - Weather: `SetWeatherImmediate()`, `TransitionToWeather()`, `CancelWeatherTransition()`
+- Sleep: `RequestSleep()`, `CancelSleep()`, `IsSleeping()`, `GetSleepProgress()`, `CastSleepVote()`
 - Providers: `RegisterSkyProvider()`, `DiscoverSkyProviders()`
-- Console: `WW.SetTime`, `WW.SetSpeed`, `WW.PauseTime`, `WW.SetWeather`
+- Console: `WW.SetTime`, `WW.SetSpeed`, `WW.PauseTime`, `WW.SetWeather`, `WW.Sleep`, `WW.CancelSleep`
 
 **L0 Contracts (SharedDefaults):**
-- Data: `FTimeOfDayState`, `FWeatherConfig`, `FWeatherState`, `FTimeThreshold`
-- Delegates: `FOnHourChanged`, `FOnDayChanged`, `FOnTimeOfDayChanged`, `FOnWeatherChanged`, `FOnWeatherTransitionStarted`, `FOnWeatherTransitionComplete`, `FOnTimePaused`, `FOnTimeResumed`
-- Interface: `ITimeWeatherProviderInterface` (6 methods: SetTimeOfDay, GetCurrentTimeOfDay, SetWeatherState, GetCurrentWeatherTag, SetWeatherTransitionAlpha, GetTimeWeatherComponent)
+- Data: `FTimeOfDayState`, `FWeatherConfig`, `FWeatherState`, `FTimeThreshold`, `FSleepRequest`, `FSleepVoteState`
+- Delegates: `FOnHourChanged`, `FOnDayChanged`, `FOnTimeOfDayChanged`, `FOnWeatherChanged`, `FOnWeatherTransitionStarted`, `FOnWeatherTransitionComplete`, `FOnTimePaused`, `FOnTimeResumed`, `FOnSleepRequested`, `FOnSleepStarted`, `FOnSleepCompleted`, `FOnSleepCancelled`, `FOnSleepVoteChanged`
+- Interface: `ITimeWeatherProviderInterface` (6 methods), `ISleepableActorInterface` (6 methods: CanSleep, GetSleepLocation, OnSleepStarted, OnSleepCompleted, OnSleepCancelled, GetSleepComponent)
 
-**Tags (16):** Time.State.{Dawn,Morning,Afternoon,Evening,Dusk,Night}, Weather.Type.{Clear,Cloudy,Rain,Fog,Snow,Storm}, Weather.Transition.{Active,Complete}, Debug.TimeWeather, UI.Widget.Category.TimeWeather
+**Tags (23):** Time.State.{Dawn,Morning,Afternoon,Evening,Dusk,Night}, Weather.Type.{Clear,Cloudy,Rain,Fog,Snow,Storm}, Weather.Transition.{Active,Complete}, Sleep.State.{Awake,Initiating,Sleeping,Waking}, Sleep.Vote.{Pending,Approved,Rejected}, Debug.TimeWeather, UI.Widget.Category.TimeWeather
 
-**Deferred to next session:** Sleep mechanic, multiplayer sleep consensus, ISleepableActorInterface, USleepWidget_Base, day-end summary, weather randomization
+**Sleep System (V2.13.9):**
+- KCD-style fast-forward via `TimeSpeedMultiplier` change (60x default), existing 10Hz timer auto-accelerates
+- `ASleepManagerAuthority` — Server-spawned replicated actor for MP RPCs (subsystem cannot own RPCs)
+- MP consensus: Valheim/Minecraft-style vote system with configurable threshold (default 100%)
+- Midnight wrap-around: `bWraps = (Start > Target)`, handles 22:00→06:00 correctly
+- Cancel = Stardew model (time keeps what it advanced, no revert)
+
+**Deferred:** Day-end summary, weather randomization
 
 ---
 
@@ -1242,7 +1258,7 @@ OnCraftingComplete.Broadcast(RecipeID);  // Plugin A broadcasts
 
 ## 🔗 INTERFACE SYSTEM
 
-### Complete Interface List (12 Interfaces)
+### Complete Interface List (14 Interfaces)
 
 | Interface | File Location | Mandatory Getter | Functions | Purpose |
 |-----------|---------------|------------------|-----------|---------|
@@ -1258,6 +1274,8 @@ OnCraftingComplete.Broadcast(RecipeID);  // Plugin A broadcasts
 | IReplicatedWidgetInterface | `Interfaces/AdvancedWidgetFramework/ReplicatedWidgetInterface.h` | GetReplicatedWidgetAsObject() | 5 | MP widget sync |
 | IDockableWidgetInterface | `Interfaces/AdvancedWidgetFramework/DockableWidgetInterface.h` | GetDockableAsObject() | 7 | Dockable layout |
 | IQuestGiverInterface | `Interfaces/ModularQuestSystem/QuestGiverInterface.h` | GetQuestGiverComponent() | 5 | Quest giver NPC lifecycle |
+| ITimeWeatherProviderInterface | `Interfaces/WeatherTimeManager/TimeWeatherProviderInterface.h` | GetTimeWeatherComponent() | 6 | Sky/atmosphere sync |
+| ISleepableActorInterface | `Interfaces/WeatherTimeManager/SleepableActorInterface.h` | GetSleepComponent() | 6 | Sleep bed/location |
 
 ### Interface Creation Rules
 
